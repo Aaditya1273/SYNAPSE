@@ -72,4 +72,136 @@ contract ApprovalManager is Ownable, ReentrancyGuard {
                 success = true;
                 successCount++;
             } catch {
-          
+                success = false;
+            }
+
+            results[i] = ApprovalRevocation({
+                token: tokens[i],
+                spender: spenders[i],
+                success: success
+            });
+
+            emit SingleRevocation(msg.sender, tokens[i], spenders[i], success);
+        }
+
+        emit BatchRevocation(msg.sender, tokens.length, successCount);
+        return results;
+    }
+
+    /**
+     * @dev Revoke all approvals for a specific token to multiple spenders
+     * @param token The ERC20 token contract
+     * @param spenders Array of spenders to revoke approvals from
+     */
+    function revokeTokenApprovals(
+        address token,
+        address[] calldata spenders
+    ) external nonReentrant returns (uint256 successCount) {
+        require(spenders.length > 0, "Empty spenders array");
+        require(spenders.length <= 50, "Too many spenders");
+
+        successCount = 0;
+
+        for (uint256 i = 0; i < spenders.length; i++) {
+            bool success;
+            try IERC20(token).approve(spenders[i], 0) {
+                success = true;
+                successCount++;
+            } catch {
+                success = false;
+            }
+
+            emit SingleRevocation(msg.sender, token, spenders[i], success);
+        }
+
+        emit BatchRevocation(msg.sender, spenders.length, successCount);
+        return successCount;
+    }
+
+    /**
+     * @dev Check current allowance for a token-spender pair
+     * @param token The ERC20 token contract
+     * @param owner The token owner
+     * @param spender The spender
+     * @return The current allowance
+     */
+    function getAllowance(
+        address token,
+        address owner,
+        address spender
+    ) external view returns (uint256) {
+        return IERC20(token).allowance(owner, spender);
+    }
+
+    /**
+     * @dev Check multiple allowances at once
+     * @param tokens Array of ERC20 token contracts
+     * @param owner The token owner
+     * @param spenders Array of spenders
+     * @return allowances Array of current allowances
+     */
+    function getBatchAllowances(
+        address[] calldata tokens,
+        address owner,
+        address[] calldata spenders
+    ) external view returns (uint256[] memory allowances) {
+        require(tokens.length == spenders.length, "Arrays length mismatch");
+        
+        allowances = new uint256[](tokens.length);
+        
+        for (uint256 i = 0; i < tokens.length; i++) {
+            try IERC20(tokens[i]).allowance(owner, spenders[i]) returns (uint256 allowance) {
+                allowances[i] = allowance;
+            } catch {
+                allowances[i] = 0;
+            }
+        }
+        
+        return allowances;
+    }
+
+    /**
+     * @dev Emergency function to revoke approvals on behalf of user (requires signature)
+     * @param user The user whose approvals to revoke
+     * @param tokens Array of ERC20 token contracts
+     * @param spenders Array of spenders
+     * @param deadline Signature deadline
+     * @param v Signature v
+     * @param r Signature r
+     * @param s Signature s
+     */
+    function emergencyRevokeWithSignature(
+        address user,
+        address[] calldata tokens,
+        address[] calldata spenders,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external nonReentrant {
+        require(block.timestamp <= deadline, "Signature expired");
+        require(tokens.length == spenders.length, "Arrays length mismatch");
+        
+        // Verify signature (simplified - in production use EIP-712)
+        bytes32 hash = keccak256(abi.encodePacked(
+            user,
+            tokens,
+            spenders,
+            deadline,
+            address(this)
+        ));
+        
+        address signer = ecrecover(hash, v, r, s);
+        require(signer == user, "Invalid signature");
+
+        // Execute revocations
+        uint256 successCount = 0;
+        for (uint256 i = 0; i < tokens.length; i++) {
+            // This would require the contract to have approval or use meta-transactions
+            // Implementation depends on the specific approval mechanism
+            emit SingleRevocation(user, tokens[i], spenders[i], false);
+        }
+
+        emit BatchRevocation(user, tokens.length, successCount);
+    }
+}
