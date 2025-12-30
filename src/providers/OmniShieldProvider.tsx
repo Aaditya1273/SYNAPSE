@@ -46,61 +46,17 @@ export const OmniShieldProvider = ({ children }: { children: ReactNode }) => {
 
     // Auto-revoke if enabled and we have permissions
     if (autoRevokeEnabled && permission && sessionAccount && publicClient) {
-      console.log("🛡️ Auto-revoking permissions due to threat...");
+      console.log("🛡️ Auto-revoke would be triggered for threat:", threat.type);
       
-      try {
-        // Import the revocation logic
-        const { bundlerClient } = await import("@/services/bundlerClient");
-        const { pimlicoClient } = await import("@/services/pimlicoClient");
-        
-        if (!permission.context || !permission.signerMeta?.delegationManager) {
-          console.error("Missing permission context or delegation manager");
-          return;
-        }
-
-        // Get gas prices
-        const chainId = 11155111; // Sepolia
-        const { fast: fee } = await pimlicoClient(chainId).getUserOperationGasPrice();
-
-        // Execute auto-revoke for each threatened contract
-        for (const contractAddress of threat.contracts) {
-          try {
-            console.log(`🔒 Revoking approval for contract: ${contractAddress}`);
-            
-            // Validate contract address format
-            if (!contractAddress.startsWith('0x') || contractAddress.length !== 42) {
-              console.error(`Invalid contract address format: ${contractAddress}`);
-              continue;
-            }
-            
-            // Create approval revocation call data (approve with 0 amount)
-            const revokeCallData = `0x095ea7b3${contractAddress.slice(2).padStart(64, '0')}${'0'.repeat(64)}` as `0x${string}`;
-            
-            const hash = await bundlerClient(chainId).sendUserOperationWithDelegation({
-              publicClient,
-              account: sessionAccount,
-              calls: [
-                {
-                  to: contractAddress as `0x${string}`,
-                  data: revokeCallData,
-                  value: 0n,
-                  permissionsContext: permission.context,
-                  delegationManager: permission.signerMeta.delegationManager,
-                },
-              ],
-              ...fee,
-            });
-
-            console.log(`✅ Revocation transaction sent: ${hash}`);
-          } catch (error) {
-            console.error(`❌ Failed to revoke approval for ${contractAddress}:`, error);
-          }
-        }
-        
-        console.log("✅ Auto-revoke process completed");
-      } catch (error) {
-        console.error("❌ Auto-revoke failed:", error);
+      // TODO: Implement actual auto-revoke once smart account integration is complete
+      console.log("📝 Mock auto-revoke for contracts:", threat.contracts);
+      
+      // For now, just log the action that would be taken
+      for (const contractAddress of threat.contracts) {
+        console.log(`🔒 Would revoke approval for contract: ${contractAddress}`);
       }
+      
+      console.log("✅ Mock auto-revoke process completed");
     }
   };
 

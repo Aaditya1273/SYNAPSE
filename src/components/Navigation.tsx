@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, BarChart3, Lock, Eye, Cog } from "lucide-react";
+import { Shield, BarChart3, Lock, Eye, Cog, Menu, X } from "lucide-react";
 
 interface NavigationProps {
   activeTab: string;
@@ -15,8 +15,8 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'monitor', label: 'Threat Monitor', icon: Shield },
     { id: 'approvals', label: 'Approvals', icon: Lock },
-    { id: 'security', label: 'Security', icon: Settings },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'security', label: 'Security', icon: Eye },
+    { id: 'settings', label: 'Settings', icon: Cog }
   ];
 
   return (

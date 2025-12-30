@@ -23,11 +23,12 @@ export class ThreatDetectionService {
       
       const config = {
         url: "https://sepolia.hypersync.xyz",
-        // Add API token when available
-        bearerToken: process.env.NEXT_PUBLIC_ENVIO_API_KEY
+        // Use apiToken instead of bearerToken
+        apiToken: process.env.NEXT_PUBLIC_ENVIO_API_KEY || ""
       };
       
-      this.client = HypersyncClient.new(config);
+      // Use HypersyncClient constructor directly
+      this.client = new HypersyncClient(config);
       console.log("🔗 HyperSync client initialized");
     } catch (error) {
       console.warn("⚠️ HyperSync client failed to initialize, using mock mode:", error);

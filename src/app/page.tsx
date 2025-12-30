@@ -10,6 +10,7 @@ import ThreatMonitor from "@/components/ThreatMonitor";
 import OmniShieldDashboard from "@/components/OmniShieldDashboard";
 import SecurityDashboard from "@/components/SecurityDashboard";
 import ApprovalManager from "@/components/ApprovalManager";
+import Settings from "@/components/Settings";
 import Navigation from "@/components/Navigation";
 import { useAccount } from "wagmi";
 
@@ -42,6 +43,8 @@ export default function Home() {
         return <ApprovalManager />;
       case 'security':
         return <SecurityDashboard />;
+      case 'settings':
+        return <Settings />;
       default:
         return <OmniShieldDashboard />;
     }

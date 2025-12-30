@@ -4,12 +4,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createConfig, http, WagmiProvider } from "wagmi";
 import { sepolia } from "viem/chains";
 import { ReactNode } from "react";
-import { metaMask } from "wagmi/connectors";
 import { PermissionProvider } from "@/providers/PermissionProvider";
 import { SessionAccountProvider } from "./SessionAccountProvider";
 import { OmniShieldProvider } from "./OmniShieldProvider";
 
-export const connectors = [metaMask()];
+// Create a minimal wagmi config without any connectors to avoid crypto issues
+// Users can still connect via window.ethereum directly
+export const connectors: any[] = [];
 
 const queryClient = new QueryClient();
 
