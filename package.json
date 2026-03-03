@@ -1,0 +1,12 @@
+{
+  "name": "omni-sentry",
+  "version": "1.0.0",
+  "description": "Omni-Sentry: Cross-Chain Institutional Risk & Settlement Layer",
+  "private": true,
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0"
+  },
+  "devDependencies": {
+    "solc": "^0.8.24"
+  }
+}
