@@ -14,6 +14,8 @@
 
 # ==========================================================================
 tenderly-testnet:
+  account:
+    workflow-owner-address: "0x10625674f9780E604074e94b6F6f6F026f3a1BdA"
   rpcs:
     - chain-name: ethereum-testnet-sepolia
       url: https://virtual.sepolia.us-west.rpc.tenderly.co/ddf4998e-00a6-47cd-b249-8c1018222361
