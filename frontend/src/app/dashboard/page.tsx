@@ -1,11 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Activity, ShieldAlert, Cpu, Lock, Globe, ExternalLink } from "lucide-react";
+import { Activity, ShieldAlert, Cpu, Lock, Globe, ExternalLink, Loader2 } from "lucide-react";
+import { useAetherState } from "@/lib/hooks";
 
 export default function Dashboard() {
-    const riskScore = 88;
-    const status = "ISOLATED";
+    const { isPaused, loading } = useAetherState();
+    const riskScore = isPaused ? 88 : 12;
+    const status = isPaused ? "ISOLATED" : "ACTIVE";
 
     return (
         <div className="max-w-7xl mx-auto space-y-8">
@@ -16,8 +18,8 @@ export default function Dashboard() {
                     <p className="text-gray-400">Monitoring Aegis AI Risk Engine & CRE Workflows</p>
                 </div>
                 <div className="flex gap-2">
-                    <span className="px-3 py-1 rounded-full bg-[#ff2e5d]/20 text-[#ff2e5d] text-xs font-bold border border-[#ff2e5d]/30 flex items-center gap-1">
-                        <ShieldAlert size={14} /> SECURITY ALERT: HIGH RISK
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 ${isPaused ? 'bg-[#ff2e5d]/20 text-[#ff2e5d] border-[#ff2e5d]/30' : 'bg-[#27ae60]/20 text-[#27ae60] border-[#27ae60]/30'}`}>
+                        {loading ? <Loader2 size={14} className="animate-spin" /> : isPaused ? <><ShieldAlert size={14} /> SECURITY ALERT: ISOLATED</> : <><Activity size={14} /> SYSTEM STATUS: OPERATIONAL</>}
                     </span>
                 </div>
             </div>
@@ -40,7 +42,7 @@ export default function Dashboard() {
                                 <circle cx="96" cy="96" r="80" fill="transparent" stroke="currentColor" strokeWidth="12" className="text-white/5" />
                                 <motion.circle
                                     cx="96" cy="96" r="80"
-                                    fill="transparent" stroke="#ff2e5d" strokeWidth="12"
+                                    fill="transparent" stroke={isPaused ? "#ff2e5d" : "#00f2ff"} strokeWidth="12"
                                     strokeDasharray={2 * Math.PI * 80}
                                     initial={{ strokeDashoffset: 2 * Math.PI * 80 }}
                                     animate={{ strokeDashoffset: (2 * Math.PI * 80) * (1 - riskScore / 100) }}
