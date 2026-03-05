@@ -64,7 +64,7 @@ async function onRiskCron(runtime: Runtime<Config>, _payload: CronPayload): Prom
 function initWorkflow(config: Config, _secretsProvider: SecretsProvider) {
 	const cron = new cre.capabilities.CronCapability();
 	return [
-		// --- MINIMAL DEMO HANDLER ---
+		// --- AetherSentinel DEMO HANDLER (Predict-Isolate-Heal) ---
 		cre.handler(cron.trigger({ schedule: config.scheduleRisk }), onDemoCron),
 
 		// 2. AI Sentiment Analysis (Aegis Engine)
