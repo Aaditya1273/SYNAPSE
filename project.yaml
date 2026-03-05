@@ -15,7 +15,7 @@
 # ==========================================================================
 tenderly-testnet:
   rpcs:
-    - chain-name: tenderly-sepolia
+    - chain-name: ethereum-testnet-sepolia
       url: https://virtual.sepolia.us-west.rpc.tenderly.co/ddf4998e-00a6-47cd-b249-8c1018222361
 
 # ==========================================================================

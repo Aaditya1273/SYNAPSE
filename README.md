@@ -61,7 +61,7 @@ Add your RPCs in `project.yaml`. For testing, we use a **Tenderly Virtual TestNe
 ```yaml
 tenderly-testnet:
   rpcs:
-    - chain-name: tenderly-sepolia
+    - chain-name: ethereum-testnet-sepolia
       url: https://virtual.sepolia.us-west.rpc.tenderly.co/ddf4998e-00a6-47cd-b249-8c1018222361
 ```
 
@@ -71,8 +71,8 @@ Simulate the autonomous loop locally:
 # Ensure Bun is in your path
 export PATH=$PATH:~/.bun/bin
 
-# Run simulation
-cre workflow simulate my-workflow -T tenderly-testnet
+# Run simulation with specific environment
+cre workflow simulate my-workflow --env .env.local -T tenderly-testnet
 ```
 
 ## 🏆 Hackathon Tracks

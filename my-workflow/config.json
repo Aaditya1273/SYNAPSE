@@ -3,7 +3,7 @@
     "scheduleSentiment": "15 */1 * * * *",
     "scheduleNAV": "30 */1 * * * *",
     "scheduleCCIP": "45 */1 * * * *",
-    "chainName": "tenderly-sepolia",
+    "chainName": "ethereum-testnet-sepolia",
     "omniSentryCoreAddress": "0x5e9168a48FC62674D69f18bB65e090BB532655dF",
     "tokenizedTreasuryAddress": "0x883c1968d57B7eb06EC82983a62431eB0C2e2717",
     "riskThreshold": 70,

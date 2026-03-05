@@ -3,6 +3,7 @@ import {
 	Runner,
 	type Runtime,
 	type CronPayload,
+	type SecretsProvider,
 } from '@chainlink/cre-sdk';
 import { z } from 'zod';
 import { onSentimentCron } from './ai-sentiment';
@@ -13,16 +14,16 @@ import { onCCIPMigrationCron, onNAVUpdateCron } from './execution-logic';
 
 const configSchema = z.object({
 	// Schedule intervals for each autonomous handler
-	scheduleRisk: z.string().default("0 */1 * * * *"),
-	scheduleSentiment: z.string().default("15 */1 * * * *"),
-	scheduleNAV: z.string().default("30 */1 * * * *"),
-	scheduleCCIP: z.string().default("45 */1 * * * *"),
+	scheduleRisk: z.string(),
+	scheduleSentiment: z.string(),
+	scheduleNAV: z.string(),
+	scheduleCCIP: z.string(),
 
 	chainName: z.string(),
 	omniSentryCoreAddress: z.string(),
 	tokenizedTreasuryAddress: z.string(),
-	riskThreshold: z.number().default(70),
-	aiSentimentThreshold: z.number().default(80),
+	riskThreshold: z.number(),
+	aiSentimentThreshold: z.number(),
 	mockTradFiEndpoint: z.string().optional(),
 });
 
@@ -58,7 +59,9 @@ async function onRiskCron(runtime: Runtime<Config>, _payload: CronPayload): Prom
 
 // ---------- Init ----------
 
-function initWorkflow(config: Config) {
+// ---------- Init ----------
+
+function initWorkflow(config: Config, _secretsProvider: SecretsProvider) {
 	const cron = new cre.capabilities.CronCapability();
 	return [
 		// --- MINIMAL DEMO HANDLER ---
