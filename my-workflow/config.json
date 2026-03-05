@@ -4,8 +4,8 @@
     "scheduleNAV": "30 */1 * * * *",
     "scheduleCCIP": "45 */1 * * * *",
     "chainName": "tenderly-sepolia",
-    "omniSentryCoreAddress": "0x1234567890123456789012345678901234567890",
-    "tokenizedTreasuryAddress": "0x0987654321098765432109876543210987654321",
+    "omniSentryCoreAddress": "0x5e9168a48FC62674D69f18bB65e090BB532655dF",
+    "tokenizedTreasuryAddress": "0x883c1968d57B7eb06EC82983a62431eB0C2e2717",
     "riskThreshold": 70,
     "aiSentimentThreshold": 80
 }

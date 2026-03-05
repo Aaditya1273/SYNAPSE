@@ -6,6 +6,7 @@ import {
 } from '@chainlink/cre-sdk';
 import { z } from 'zod';
 import { onSentimentCron } from './ai-sentiment';
+import { onDemoCron } from './minimal-demo';
 import { onCCIPMigrationCron, onNAVUpdateCron } from './execution-logic';
 
 // ---------- Config ----------
@@ -60,8 +61,9 @@ async function onRiskCron(runtime: Runtime<Config>, _payload: CronPayload): Prom
 function initWorkflow(config: Config) {
 	const cron = new cre.capabilities.CronCapability();
 	return [
-		// 1. Core Financial Risk Monitoring
-		cre.handler(cron.trigger({ schedule: config.scheduleRisk }), onRiskCron),
+		// --- MINIMAL DEMO HANDLER ---
+		cre.handler(cron.trigger({ schedule: config.scheduleRisk }), onDemoCron),
+
 		// 2. AI Sentiment Analysis (Aegis Engine)
 		cre.handler(cron.trigger({ schedule: config.scheduleSentiment }), onSentimentCron),
 		// 3. Autonomous NAV Updates (RWA)

@@ -1,6 +1,30 @@
-node_modules
+# Dependencies
+node_modules/
+lib/
+bun.lockb
+package-lock.json
+yarn.lock
+
+# Foundry
+out/
+cache/
+broadcast/
+
+# Environment Variables
 .env
-.DS_Store
+.env.local
+.env.staging
+.env.production
+.env.*
+
+# CRE
+.cre/
 .cre-cli
 .cre-cli-cache
-.cre-cli-cache
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
