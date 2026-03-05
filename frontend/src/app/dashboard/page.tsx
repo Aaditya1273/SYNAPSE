@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Activity, ShieldAlert, Cpu, Lock, Globe, ExternalLink, Loader2 } from "lucide-react";
+import { Activity, ShieldAlert, Cpu, Lock, Globe, ExternalLink, Loader2, RefreshCw } from "lucide-react";
 import { useAetherState } from "@/lib/hooks";
 
 export default function Dashboard() {
@@ -133,7 +133,7 @@ export default function Dashboard() {
 
                 <div className="glass rounded-3xl p-8 flex flex-col items-center justify-center text-center space-y-4">
                     <div className="w-16 h-16 rounded-full bg-[#00f2ff]/10 flex items-center justify-center">
-                        <RefreshCcw className="text-[#00f2ff] animate-spin-slow" />
+                        <RefreshCw className="text-[#00f2ff] animate-spin-slow" />
                     </div>
                     <h3 className="text-xl font-bold">Autonomous Monitoring Active</h3>
                     <p className="text-gray-400 text-sm max-w-xs">CRE Workflows are scanning 12 asset classes and 8 markets for predictive contagion alerts.</p>
