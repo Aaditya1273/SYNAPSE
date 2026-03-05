@@ -40,6 +40,11 @@ export default function Home() {
           Bridge institutional risk data with Web3 liquidity protection in real-time.
         </motion.p>
 
+        <div className="absolute inset-0 -z-10 opacity-20 pointer-events-none">
+          <img src="/hero-bg.png" alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#05060f]/50 to-[#05060f]" />
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

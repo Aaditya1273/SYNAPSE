@@ -24,7 +24,7 @@ export default function RootLayout({
               <span className="text-xl font-bold tracking-tight text-white">Aether<span className="text-[#00f2ff]">Sentinel</span></span>
             </div>
             <div className="flex gap-8 text-sm font-medium text-gray-400">
-              <a href="/" className="hover:text-white transition-colors">Network</a>
+              <a href="/network" className="hover:text-white transition-colors">Network</a>
               <a href="/dashboard" className="hover:text-white transition-colors">Protocol</a>
               <a href="/compliance" className="hover:text-white transition-colors">Vault</a>
             </div>
