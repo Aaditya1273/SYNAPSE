@@ -1,12 +1,21 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Shield, RefreshCw, ArrowRight, Globe, Cpu } from "lucide-react";
-import Link from "next/link";
-import { useAetherState } from "@/lib/hooks";
+import { useRouter } from "next/navigation";
+import { useAetherState, useWallet } from "@/lib/hooks";
 
 export default function Home() {
   const { isPaused, riskState } = useAetherState();
+  const { account, connect, loading: walletLoading } = useWallet();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (account) {
+      router.push('/dashboard');
+    }
+  }, [account, router]);
 
   return (
     <div className="max-w-7xl mx-auto space-y-32 py-12 px-8">
@@ -51,9 +60,13 @@ export default function Home() {
           transition={{ delay: 0.4 }}
           className="flex flex-col sm:flex-row justify-center gap-6 pt-12"
         >
-          <Link href="/dashboard" className="px-10 py-5 rounded-xl bg-[#2563EB] text-white font-black uppercase tracking-[0.2em] text-[11px] flex items-center gap-3 hover:translate-y-[-4px] transition-all shadow-xl shadow-blue-500/20 active:scale-95">
-            Initialize Terminal <ArrowRight size={18} />
-          </Link>
+          <button
+            onClick={connect}
+            disabled={walletLoading}
+            className="px-10 py-5 rounded-xl bg-[#2563EB] text-white font-black uppercase tracking-[0.2em] text-[11px] flex items-center gap-3 hover:translate-y-[-4px] transition-all shadow-xl shadow-blue-500/20 active:scale-95"
+          >
+            {walletLoading ? "Initializing..." : "Connect Tactical Wallet"} <ArrowRight size={18} />
+          </button>
           <button className="px-10 py-5 rounded-xl border border-gray-100 bg-white text-[#0F172A] font-black uppercase tracking-[0.2em] text-[11px] hover:bg-gray-50 transition-all border-b-4 border-b-gray-200 active:border-b-0 active:translate-y-[2px]">
             System Documentation
           </button>

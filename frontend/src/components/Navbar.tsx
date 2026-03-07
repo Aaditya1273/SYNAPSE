@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export function Navbar() {
-    const { account, connect, disconnect, loading: walletLoading } = useWallet();
+    const { account, connect, disconnect, loading: walletLoading, terminalConnected, connectTerminal } = useWallet();
     const pathname = usePathname();
 
     const navItems = [
@@ -30,7 +30,7 @@ export function Navbar() {
                 </Link>
 
                 <div className="hidden md:flex gap-8 text-[11px] font-bold uppercase tracking-widest">
-                    {navItems.map((item) => {
+                    {account && navItems.map((item) => {
                         const isActive = pathname === item.href;
                         return (
                             <Link
@@ -50,13 +50,42 @@ export function Navbar() {
                     })}
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                    {/* Connect Terminal Button */}
+                    <button
+                        onClick={connectTerminal}
+                        disabled={walletLoading || !account || terminalConnected}
+                        className={`px-5 py-2.5 rounded-lg border text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${terminalConnected
+                            ? 'bg-emerald-50 border-emerald-100 text-emerald-600'
+                            : !account
+                                ? 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed'
+                                : 'bg-white border-gray-200 text-[#0F172A] hover:bg-gray-50 hover:border-gray-300'
+                            }`}
+                    >
+                        {terminalConnected ? (
+                            <>
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                Terminal Active
+                            </>
+                        ) : "Connect Terminal"}
+                    </button>
+
+                    {/* wallet Connect - Integrated with ThirdWeb context */}
                     <button
                         onClick={account ? disconnect : connect}
                         disabled={walletLoading}
-                        className="px-5 py-2.5 rounded-lg border border-gray-200 text-[10px] font-bold uppercase tracking-widest text-[#0F172A] hover:bg-gray-50 hover:border-gray-300 transition-all"
+                        className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${account
+                            ? 'bg-blue-50 border border-blue-100 text-[#2563EB]'
+                            : 'bg-[#2563EB] text-white shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95'
+                            }`}
                     >
-                        {walletLoading ? <Loader2 className="animate-spin w-4 h-4" /> : account ? `${account.slice(0, 6)}...${account.slice(-4)}` : "Connect Terminal"}
+                        {walletLoading ? (
+                            <Loader2 className="animate-spin w-4 h-4 mx-auto" />
+                        ) : account ? (
+                            `${account.slice(0, 6)}...${account.slice(-4)}`
+                        ) : (
+                            "Connect Wallet"
+                        )}
                     </button>
                 </div>
             </div>
