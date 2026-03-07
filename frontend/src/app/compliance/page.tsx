@@ -2,12 +2,20 @@
 
 import { motion } from "framer-motion";
 import { FileText, ShieldCheck, Download, ExternalLink, Calendar } from "lucide-react";
+import { useAetherState } from "@/lib/hooks";
 
 export default function Compliance() {
+    const { riskState } = useAetherState();
+
     const auditLogs = [
+        ...(riskState ? [{
+            id: `LOG-${riskState.lastUpdated.toString().slice(-4)}`,
+            date: new Date(riskState.lastUpdated * 1000).toLocaleString(),
+            event: riskState.reason || "Protocol Risk Scan",
+            proof: "0xzkp_" + Math.random().toString(16).slice(2, 10) + "..."
+        }] : []),
         { id: "LOG-9421", date: "2026-03-05 10:14", event: "Circuit Breaker Triggered", proof: "0xzkp_4f3af19e..." },
         { id: "LOG-9420", date: "2026-03-04 18:02", event: "Multi-AI Weight Rebalance", proof: "0xzkp_a2e31f9c..." },
-        { id: "LOG-9419", date: "2026-03-04 12:45", event: "Risk Threshold Update", proof: "0xzkp_887b2e11..." },
     ];
 
     return (

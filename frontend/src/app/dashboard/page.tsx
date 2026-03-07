@@ -1,144 +1,213 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Activity, ShieldAlert, Cpu, Lock, Globe, ExternalLink, Loader2, RefreshCw } from "lucide-react";
+import { Activity, ShieldAlert, Cpu, Lock, Globe, ExternalLink, Loader2, RefreshCw, BarChart3, Fingerprint } from "lucide-react";
 import { useAetherState } from "@/lib/hooks";
 
 export default function Dashboard() {
-    const { isPaused, loading } = useAetherState();
-    const riskScore = isPaused ? 88 : 12;
-    const status = isPaused ? "ISOLATED" : "ACTIVE";
+    const { isPaused, riskState, loading } = useAetherState();
+    const riskScore = riskState?.score ?? (isPaused ? 88 : 12);
+    const lastUpdate = riskState ? new Date(riskState.lastUpdated * 1000).toLocaleTimeString() : "SYNCING...";
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
+        <div className="max-w-7xl mx-auto space-y-12">
             {/* Header */}
-            <div className="flex justify-between items-end">
-                <div>
-                    <h1 className="text-4xl font-black tracking-tight">Protocol Dashboard</h1>
-                    <p className="text-gray-400">Monitoring Aegis AI Risk Engine & CRE Workflows</p>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#00f2ff]">
+                        <Fingerprint size={14} /> Secure Terminal Access
+                    </div>
+                    <h1 className="text-5xl font-black tracking-tighter text-white">Risk Orchestration Hub</h1>
+                    <p className="text-gray-400 font-medium">Monitoring Aegis AI Risk Engine • <span className="text-gray-200">Refreshed: {lastUpdate}</span></p>
                 </div>
-                <div className="flex gap-2">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 ${isPaused ? 'bg-[#ff2e5d]/20 text-[#ff2e5d] border-[#ff2e5d]/30' : 'bg-[#27ae60]/20 text-[#27ae60] border-[#27ae60]/30'}`}>
-                        {loading ? <Loader2 size={14} className="animate-spin" /> : isPaused ? <><ShieldAlert size={14} /> SECURITY ALERT: ISOLATED</> : <><Activity size={14} /> SYSTEM STATUS: OPERATIONAL</>}
-                    </span>
+                <div className="flex items-center gap-4">
+                    <div className={`px-5 py-2.5 rounded-2xl glass-premium flex items-center gap-3 border transition-all duration-500 ${isPaused ? 'border-red-500/30 bg-red-500/5' : 'border-emerald-500/30 bg-emerald-500/5'}`}>
+                        {loading ? (
+                            <Loader2 size={16} className="animate-spin text-gray-400" />
+                        ) : isPaused ? (
+                            <><ShieldAlert size={16} className="text-[#ff2e5d] animate-pulse" /> <span className="text-[11px] font-black uppercase tracking-widest text-[#ff2e5d]">Protocol Isolated</span></>
+                        ) : (
+                            <><Activity size={16} className="text-[#27ae60] animate-pulse" /> <span className="text-[11px] font-black uppercase tracking-widest text-[#27ae60]">System Operational</span></>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* Main Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Main Risk Display */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                {/* Risk Overview */}
-                <div className="md:col-span-2 glass rounded-3xl p-8 space-y-8">
-                    <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-bold flex items-center gap-2">
-                            <Activity className="text-[#00f2ff]" /> Real-time Risk Assessment
-                        </h2>
-                        <span className="text-sm text-gray-400">Target: RWA Treasury Vault</span>
+                {/* Tactical Risk Meter */}
+                <div className="lg:col-span-2 glass-premium rounded-[2.5rem] p-10 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <BarChart3 size={200} className="text-white" />
                     </div>
 
-                    <div className="flex items-center gap-12">
-                        <div className="relative w-48 h-48 flex items-center justify-center">
+                    <div className="flex justify-between items-start relative z-10">
+                        <div className="space-y-1">
+                            <h2 className="text-2xl font-black tracking-tight text-white flex items-center gap-3">
+                                <Activity className="text-[#00f2ff]" /> Threat Intel Scan
+                            </h2>
+                            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Target Asset: RWA_TREASURY_VAULT_01</p>
+                        </div>
+                        <div className="text-[10px] font-black text-[#00f2ff] bg-[#00f2ff]/10 px-3 py-1.5 rounded-lg uppercase tracking-widest">Live On-Chain Feed</div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row items-center gap-16 py-8 relative z-10">
+                        <div className="relative w-64 h-64 flex items-center justify-center">
+                            {/* SVG Gauge */}
                             <svg className="w-full h-full -rotate-90">
-                                <circle cx="96" cy="96" r="80" fill="transparent" stroke="currentColor" strokeWidth="12" className="text-white/5" />
+                                <defs>
+                                    <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stopColor="#00f2ff" />
+                                        <stop offset="100%" stopColor="#ff2e5d" />
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="128" cy="128" r="110" fill="transparent" stroke="currentColor" strokeWidth="16" className="text-white/5" />
                                 <motion.circle
-                                    cx="96" cy="96" r="80"
-                                    fill="transparent" stroke={isPaused ? "#ff2e5d" : "#00f2ff"} strokeWidth="12"
-                                    strokeDasharray={2 * Math.PI * 80}
-                                    initial={{ strokeDashoffset: 2 * Math.PI * 80 }}
-                                    animate={{ strokeDashoffset: (2 * Math.PI * 80) * (1 - riskScore / 100) }}
-                                    transition={{ duration: 1.5, ease: "easeOut" }}
+                                    cx="128" cy="128" r="110"
+                                    fill="transparent" stroke="url(#gaugeGradient)" strokeWidth="16" strokeLinecap="round"
+                                    strokeDasharray={2 * Math.PI * 110}
+                                    initial={{ strokeDashoffset: 2 * Math.PI * 110 }}
+                                    animate={{ strokeDashoffset: (2 * Math.PI * 110) * (1 - riskScore / 100) }}
+                                    transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
                                 />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-5xl font-black text-glow">{riskScore}</span>
-                                <span className="text-xs uppercase text-gray-500 font-bold">Severity</span>
+                                <motion.span
+                                    initial={{ scale: 0.5, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    className="text-7xl font-black text-white tracking-tighter text-glow-cyan"
+                                >
+                                    {riskScore}
+                                </motion.span>
+                                <span className="text-[10px] uppercase text-gray-500 font-black tracking-[0.3em]">Scored Severity</span>
                             </div>
                         </div>
 
-                        <div className="flex-1 grid grid-cols-2 gap-4">
+                        <div className="flex-1 grid grid-cols-2 gap-6 w-full">
                             {[
-                                { label: "Market Volatility", value: "92%", color: "#ff2e5d" },
-                                { label: "Contagion Index", value: "75/100", color: "#f39c12" },
-                                { label: "AI Confidence", value: "98.4%", color: "#00f2ff" },
-                                { label: "BFT Consensus", value: "12/12 Nodes", color: "#27ae60" }
+                                { label: "Volatility Delta", value: "92%", color: "#ff2e5d", trend: "UP" },
+                                { label: "Contagion Spillover", value: "High", color: "#f39c12", trend: "STABLE" },
+                                { label: "Engine Confidence", value: "99.8%", color: "#00f2ff", trend: "STEADY" },
+                                { label: "Node Consensus", value: "Synced", color: "#27ae60", trend: "12/12" }
                             ].map((stat, i) => (
-                                <div key={i} className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                                    <span className="text-[10px] uppercase text-gray-500 font-bold tracking-widest">{stat.label}</span>
-                                    <p className="text-lg font-bold" style={{ color: stat.color }}>{stat.value}</p>
-                                </div>
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.5 + (i * 0.1) }}
+                                    className="p-5 glass-card rounded-2xl border border-white/5 space-y-2 hover:border-[#00f2ff]/20 transition-all cursor-default"
+                                >
+                                    <span className="text-[9px] uppercase text-gray-500 font-black tracking-widest">{stat.label}</span>
+                                    <div className="flex justify-between items-end">
+                                        <p className="text-xl font-black text-white" style={{ color: stat.trend === 'UP' ? '#ff2e5d' : 'white' }}>{stat.value}</p>
+                                        <span className="text-[9px] font-bold text-gray-500">{stat.trend}</span>
+                                    </div>
+                                </motion.div>
                             ))}
                         </div>
                     </div>
                 </div>
 
-                {/* AI Consensus Card */}
-                <div className="glass rounded-3xl p-8 space-y-6">
-                    <h2 className="text-xl font-bold flex items-center gap-2">
-                        <Cpu className="text-[#375bd2]" /> Multi-AI Consensus
-                    </h2>
-                    <div className="space-y-4">
+                {/* AI Multi-Agent Consensus */}
+                <div className="glass-premium rounded-[2.5rem] p-8 space-y-8 flex flex-col">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-black tracking-tight text-white flex items-center gap-3">
+                            <Cpu className="text-[#375bd2]" /> Multi-AI Core
+                        </h2>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Confidential Multi-Agent Consensus</p>
+                    </div>
+
+                    <div className="space-y-4 flex-1">
                         {[
-                            { name: "Gemini Pro", status: "BEARISH", color: "#00f2ff", ping: "42ms" },
-                            { name: "Claude 3.5", status: "BEARISH", color: "#375bd2", ping: "115ms" },
-                            { name: "Grok-1", status: "BEARISH", color: "#ff2e5d", ping: "89ms" }
+                            { name: "Gemini 1.5 Pro", status: "BEARISH", color: "#00f2ff", latency: "42ms" },
+                            { name: "Claude 3.5 Sonnet", status: "CAUTIOUS", color: "#375bd2", latency: "115ms" },
+                            { name: "Grok-1 Autonomous", status: "PANIC", color: "#ff2e5d", latency: "89ms" }
                         ].map((ai, i) => (
-                            <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.8 + (i * 0.1) }}
+                                className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all"
+                            >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: ai.color }} />
-                                    <span className="text-sm font-semibold">{ai.name}</span>
+                                    <div className="w-2.5 h-2.5 rounded-full animate-pulse shadow-[0_0_10px_rgba(0,0,0,0.5)]" style={{ background: ai.color }} />
+                                    <span className="text-xs font-black text-white uppercase tracking-tight">{ai.name}</span>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-[10px] font-mono text-gray-500">{ai.status}</span>
-                                    <span className="text-[10px] font-mono text-gray-400">{ai.ping}</span>
+                                <div className="text-right">
+                                    <div className="text-[10px] font-black text-white opacity-80" style={{ color: ai.color }}>{ai.status}</div>
+                                    <div className="text-[9px] font-bold text-gray-500">{ai.latency}</div>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
-                    <div className="pt-4 border-t border-white/5 text-[10px] text-gray-500 font-mono italic">
-                        Confidential Compute Context Validated by Chainlink
+
+                    <div className="p-4 rounded-2xl bg-black/40 border border-white/5 text-[10px] font-bold font-mono text-gray-400 group relative">
+                        <div className="absolute top-2 left-2 w-1 h-1 rounded-full bg-[#00f2ff] animate-ping" />
+                        <span className="text-[#00f2ff] mr-2">LOG_ID:</span> {riskState?.reason || "Awaiting pulse from Oracle network..."}
                     </div>
                 </div>
 
             </div>
 
-            {/* Activity Log & Actions */}
+            {/* Bottom Orchestration Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="glass rounded-3xl p-8 space-y-6">
-                    <h2 className="text-xl font-bold flex items-center gap-2">
-                        <Globe className="text-[#00f2ff]" /> Network Orchestration
-                    </h2>
+                <div className="glass-premium rounded-[2.5rem] p-10 space-y-8 group">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-2xl font-black tracking-tight text-white flex items-center gap-3">
+                            <Globe className="text-[#00f2ff]" /> Active Firewall
+                        </h2>
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Protocol Response Unit</span>
+                    </div>
+
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 rounded-2xl bg-[#ff2e5d]/10 border border-[#ff2e5d]/20">
-                            <div className="flex gap-4">
-                                <ShieldAlert className="text-[#ff2e5d]" />
+                        <motion.div
+                            whileHover={{ x: 10 }}
+                            className="flex items-center justify-between p-5 rounded-[1.5rem] bg-[#ff2e5d]/5 border border-[#ff2e5d]/20 group-hover:bg-[#ff2e5d]/10 transition-all cursor-pointer"
+                        >
+                            <div className="flex gap-4 items-center">
+                                <div className="w-12 h-12 rounded-xl bg-[#ff2e5d]/20 flex items-center justify-center">
+                                    <ShieldAlert className="text-[#ff2e5d]" />
+                                </div>
                                 <div>
-                                    <p className="font-bold text-sm">Circuit Breaker Triggered</p>
-                                    <p className="text-xs text-gray-400">0x5e9168a4...BB532655dF</p>
+                                    <p className="font-extrabold text-white uppercase tracking-tight">Circuit Breaker Triggered</p>
+                                    <p className="font-mono text-[10px] text-gray-500">0x5e9168a4...BB532655dF</p>
                                 </div>
                             </div>
-                            <button className="p-2 rounded-lg bg-white/5 hover:bg-white/10"><ExternalLink size={16} /></button>
-                        </div>
-                        <div className="flex items-center justify-between p-4 rounded-2xl bg-[#375bd2]/10 border border-[#375bd2]/20 opacity-50">
-                            <div className="flex gap-4">
-                                <Lock className="text-[#375bd2]" />
+                            <ExternalLink size={18} className="text-gray-500 group-hover:text-white transition-colors" />
+                        </motion.div>
+
+                        <motion.div
+                            whileHover={{ x: 10 }}
+                            className="flex items-center justify-between p-5 rounded-[1.5rem] bg-[#375bd2]/5 border border-[#375bd2]/20 opacity-40 group-hover:opacity-60 transition-all cursor-not-allowed"
+                        >
+                            <div className="flex gap-4 items-center">
+                                <div className="w-12 h-12 rounded-xl bg-[#375bd2]/20 flex items-center justify-center">
+                                    <Lock className="text-[#375bd2]" />
+                                </div>
                                 <div>
-                                    <p className="font-bold text-sm">CCIP Migration Pending</p>
-                                    <p className="text-xs text-gray-400">Target: Arbitrum One</p>
+                                    <p className="font-extrabold text-white uppercase tracking-tight">CCIP Rebalance Ready</p>
+                                    <p className="font-mono text-[10px] text-gray-500">Target: ARBITRUM_ONE_VAULT</p>
                                 </div>
                             </div>
-                            <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-white/10 rounded">Queued</span>
-                        </div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 bg-white/10 rounded-full">Queued</span>
+                        </motion.div>
                     </div>
                 </div>
 
-                <div className="glass rounded-3xl p-8 flex flex-col items-center justify-center text-center space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-[#00f2ff]/10 flex items-center justify-center">
-                        <RefreshCw className="text-[#00f2ff] animate-spin-slow" />
+                <div className="glass-premium rounded-[2.5rem] p-10 flex flex-col items-center justify-center text-center space-y-6 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-[#00f2ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                    <div className="w-20 h-20 rounded-[2rem] bg-white/5 flex items-center justify-center relative shadow-2xl transition-all duration-700 group-hover:scale-110 group-hover:rotate-12">
+                        <div className="absolute inset-0 bg-[#00f2ff]/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <RefreshCw className="text-[#00f2ff] relative z-10" size={32} />
                     </div>
-                    <h3 className="text-xl font-bold">Autonomous Monitoring Active</h3>
-                    <p className="text-gray-400 text-sm max-w-xs">CRE Workflows are scanning 12 asset classes and 8 markets for predictive contagion alerts.</p>
-                    <button className="w-full py-3 rounded-xl bg-white/10 border border-white/10 font-bold hover:bg-white/15 transition-all">
-                        Manual Override [Owner Only]
+                    <div className="space-y-2 relative z-10">
+                        <h3 className="text-2xl font-black tracking-tight text-white capitalize">Autonomous Scrutiny Pulse</h3>
+                        <p className="text-gray-400 text-sm max-w-xs font-medium leading-relaxed">System is continuously scanning 12 asset classes and 8 markets for predictive contagion alerts.</p>
+                    </div>
+                    <button className="w-full py-4 rounded-2xl glass-premium border-white/10 font-black uppercase tracking-[0.2em] text-[10px] text-white hover:bg-white/5 hover:border-[#00f2ff]/50 transition-all btn-institutional relative z-10">
+                        Manual Override Protocol
                     </button>
                 </div>
             </div>

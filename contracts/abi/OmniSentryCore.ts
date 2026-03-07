@@ -17,4 +17,16 @@ export const OmniSentryCore = [
 		stateMutability: 'view',
 		type: 'function',
 	},
+	{
+		inputs: [],
+		name: 'globalRiskState',
+		outputs: [
+			{ internalType: 'enum OmniSentryCore.RiskLevel', name: 'currentLevel', type: 'uint8' },
+			{ internalType: 'uint256', name: 'riskScore', type: 'uint256' },
+			{ internalType: 'uint256', name: 'lastUpdated', type: 'uint256' },
+			{ internalType: 'string', name: 'reason', type: 'string' },
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
 ] as const;
