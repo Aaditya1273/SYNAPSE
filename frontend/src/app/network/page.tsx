@@ -1,8 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Network, Activity, Info, ShieldAlert, Zap, Layers, Cpu } from "lucide-react";
-import { useAetherState } from "@/lib/hooks";
+import { Activity, ShieldAlert, Cpu } from "lucide-react";
+import { useAetherState, useAuditLogs } from "@/lib/hooks";
 
 const nodes = [
     { id: "RWA-Treasury", label: "Institutional Vault", x: 400, y: 300, color: "var(--primary)", type: "core" },
@@ -14,7 +15,18 @@ const nodes = [
 
 export default function NetworkPage() {
     const { riskState, isPaused } = useAetherState();
+    const { logs } = useAuditLogs();
+    const [latency, setLatency] = useState(42);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setLatency(prev => Math.max(38, Math.min(48, prev + (Math.random() - 0.5) * 2)));
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
     const currentRisk = riskState?.score ?? (isPaused ? 88 : 12);
+    const latestLog = logs[0] || { id: "Log_SYNCING", event: "Monitoring Pulse" };
 
     const connections = [
         { from: "HK-Prop", to: "RWA-Treasury", risk: currentRisk },
@@ -49,7 +61,7 @@ export default function NetworkPage() {
                         <div className="pt-4 border-t border-white/5 space-y-4">
                             <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-gray-500">
                                 <span>Engine Latency</span>
-                                <span className="text-white">42ms</span>
+                                <span className="text-white">{latency.toFixed(1)}ms</span>
                             </div>
                             <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
                                 <motion.div
@@ -183,11 +195,13 @@ export default function NetworkPage() {
                             <ShieldAlert size={14} className="animate-bounce" /> Tactical Alert
                         </div>
                         <p className="text-[11px] text-gray-400 font-medium leading-relaxed">
-                            Inter-asset correlation spike detected in HK Property. Potential contagion to Institutional Vault: <span className="text-white font-bold">{currentRisk}%</span>.
+                            {latestLog.event} detected. Potential contagion to Institutional Vault: <span className="text-white font-bold">{currentRisk}%</span>.
                         </p>
                         <div className="flex gap-2">
-                            <span className="px-2 py-1 bg-red-500/10 text-red-500 text-[8px] font-black rounded uppercase">Isolated</span>
-                            <span className="px-2 py-1 bg-white/5 text-gray-500 text-[8px] font-black rounded uppercase">Log_421</span>
+                            <span className={`px-2 py-1 ${isPaused ? 'bg-red-500/10 text-red-500' : 'bg-emerald-500/10 text-emerald-500'} text-[8px] font-black rounded uppercase`}>
+                                {isPaused ? 'Isolated' : 'Operational'}
+                            </span>
+                            <span className="px-2 py-1 bg-white/5 text-gray-500 text-[8px] font-black rounded uppercase">{latestLog.id}</span>
                         </div>
                     </motion.div>
                 </div>

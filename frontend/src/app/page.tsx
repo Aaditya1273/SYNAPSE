@@ -1,9 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, Zap, RefreshCw, ArrowRight, Layers, Globe, Cpu } from "lucide-react";
+import { Shield, RefreshCw, ArrowRight, Globe, Cpu } from "lucide-react";
+import { useAetherState } from "@/lib/hooks";
 
 export default function Home() {
+  const { isPaused, riskState } = useAetherState();
   return (
     <div className="max-w-7xl mx-auto space-y-32">
       {/* Hero Section */}
@@ -40,7 +42,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-medium"
           >
-            The world's first autonomous, cross-chain contagion firewall designed for institutional Real World Assets (RWAs). Bridge deep risk intelligence with automated liquidity protection.
+            AetherSentinel is the world&apos;s first autonomous, cross-chain contagion firewall designed for institutional Real World Assets (RWAs). Currently monitoring <span className="text-white font-black">Institutional Vault 01</span> on {riskState ? "Tenderly Virtual Network" : "Syncing..."}.
           </motion.p>
         </div>
 
@@ -99,15 +101,15 @@ export default function Home() {
         </div>
         <div className="max-w-2xl space-y-8 relative z-10">
           <h2 className="text-5xl font-black tracking-tighter italic">Engineered for <br /><span className="text-[#375bd2]">Global RWA Dominance.</span></h2>
-          <p className="text-gray-400 font-medium leading-relaxed">AetherSentinel is not just a protocol; it is the silent orchestrator behind the next generation of asset tokenization. We prevent the "Contagion Domino Effect" before the first tile falls.</p>
+          <p className="text-gray-400 font-medium leading-relaxed">AetherSentinel is not just a protocol; it is the silent orchestrator behind the next generation of asset tokenization. We prevent the &quot;Contagion Domino Effect&quot; before the first tile falls.</p>
           <div className="grid grid-cols-2 gap-8 pt-4">
             <div>
-              <div className="text-3xl font-black text-white">$1.2B+</div>
-              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Protected TVL Mocked</div>
+              <div className="text-3xl font-black text-white">{isPaused ? "ISOLATED" : "ACTIVE"}</div>
+              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest text-[#00f2ff]">Current Status</div>
             </div>
             <div>
-              <div className="text-3xl font-black text-white">500ms</div>
-              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Isolation Latency</div>
+              <div className="text-3xl font-black text-white tracking-tighter">{riskState?.score ?? "???"} / 100</div>
+              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest text-[#ff2e5d]">Live Threat Score</div>
             </div>
           </div>
         </div>

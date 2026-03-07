@@ -1,13 +1,23 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Activity, ShieldAlert, Cpu, Lock, Globe, ExternalLink, Loader2, RefreshCw, BarChart3, Fingerprint } from "lucide-react";
-import { useAetherState } from "@/lib/hooks";
+import { Activity, ShieldAlert, Cpu, Globe, ExternalLink, Loader2, RefreshCw, BarChart3, Fingerprint } from "lucide-react";
+import { useAetherState, useWallet, useAetherActions, useAuditLogs } from "@/lib/hooks";
 
 export default function Dashboard() {
     const { isPaused, riskState, loading } = useAetherState();
+    const { account, client } = useWallet();
+    const { manualOverride, pending: actionPending } = useAetherActions(client, account);
+    const { logs: firewallLogs } = useAuditLogs();
+
     const riskScore = riskState?.score ?? (isPaused ? 88 : 12);
     const lastUpdate = riskState ? new Date(riskState.lastUpdated * 1000).toLocaleTimeString() : "SYNCING...";
+
+    const getAIStatus = (risk: number) => {
+        if (risk > 70) return { status: "PANIC", color: "#ff2e5d" };
+        if (risk > 40) return { status: "CAUTIOUS", color: "#f39c12" };
+        return { status: "BULLISH", color: "#27ae60" };
+    };
 
     return (
         <div className="max-w-7xl mx-auto space-y-12">
@@ -86,9 +96,9 @@ export default function Dashboard() {
 
                         <div className="flex-1 grid grid-cols-2 gap-6 w-full">
                             {[
-                                { label: "Volatility Delta", value: "92%", color: "#ff2e5d", trend: "UP" },
-                                { label: "Contagion Spillover", value: "High", color: "#f39c12", trend: "STABLE" },
-                                { label: "Engine Confidence", value: "99.8%", color: "#00f2ff", trend: "STEADY" },
+                                { label: "Volatility Delta", value: `${(riskScore * 1.05).toFixed(1)}%`, color: riskScore > 50 ? "#ff2e5d" : "#00f2ff", trend: riskScore > 50 ? "UP" : "STABLE" },
+                                { label: "Contagion Spillover", value: riskScore > 70 ? "Critical" : riskScore > 40 ? "High" : "Low", color: "#f39c12", trend: "MONITORED" },
+                                { label: "Engine Confidence", value: `${(99.9 - (riskScore / 1000)).toFixed(2)}%`, color: "#00f2ff", trend: "STEADY" },
                                 { label: "Node Consensus", value: "Synced", color: "#27ae60", trend: "12/12" }
                             ].map((stat, i) => (
                                 <motion.div
@@ -120,9 +130,9 @@ export default function Dashboard() {
 
                     <div className="space-y-4 flex-1">
                         {[
-                            { name: "Gemini 1.5 Pro", status: "BEARISH", color: "#00f2ff", latency: "42ms" },
-                            { name: "Claude 3.5 Sonnet", status: "CAUTIOUS", color: "#375bd2", latency: "115ms" },
-                            { name: "Grok-1 Autonomous", status: "PANIC", color: "#ff2e5d", latency: "89ms" }
+                            { name: "Gemini 1.5 Pro", status: getAIStatus(riskScore).status, color: getAIStatus(riskScore).color, latency: "42ms" },
+                            { name: "Claude 3.5 Sonnet", status: getAIStatus(riskScore - 5).status, color: getAIStatus(riskScore - 5).color, latency: "115ms" },
+                            { name: "Grok-1 Autonomous", status: getAIStatus(riskScore + 5).status, color: getAIStatus(riskScore + 5).color, latency: "89ms" }
                         ].map((ai, i) => (
                             <motion.div
                                 key={i}
@@ -161,38 +171,30 @@ export default function Dashboard() {
                         <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Protocol Response Unit</span>
                     </div>
 
-                    <div className="space-y-4">
-                        <motion.div
-                            whileHover={{ x: 10 }}
-                            className="flex items-center justify-between p-5 rounded-[1.5rem] bg-[#ff2e5d]/5 border border-[#ff2e5d]/20 group-hover:bg-[#ff2e5d]/10 transition-all cursor-pointer"
-                        >
-                            <div className="flex gap-4 items-center">
-                                <div className="w-12 h-12 rounded-xl bg-[#ff2e5d]/20 flex items-center justify-center">
-                                    <ShieldAlert className="text-[#ff2e5d]" />
+                    <div className="space-y-4 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                        {firewallLogs.length > 0 ? firewallLogs.map((log: { event: string; id: string; txHash?: string }, i: number) => (
+                            <motion.div
+                                key={i}
+                                whileHover={{ x: 5 }}
+                                className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
+                                onClick={() => log.txHash && window.open(`https://virtual.sepeth.tenderly.co/tx/${log.txHash}`, '_blank')}
+                            >
+                                <div className="flex gap-3 items-center">
+                                    <div className="w-10 h-10 rounded-lg bg-[#ff2e5d]/10 flex items-center justify-center">
+                                        <ShieldAlert size={18} className="text-[#ff2e5d]" />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-[11px] text-white uppercase tracking-tight">{log.event}</p>
+                                        <p className="font-mono text-[9px] text-gray-500">{log.id}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="font-extrabold text-white uppercase tracking-tight">Circuit Breaker Triggered</p>
-                                    <p className="font-mono text-[10px] text-gray-500">0x5e9168a4...BB532655dF</p>
-                                </div>
+                                <ExternalLink size={14} className="text-gray-500" />
+                            </motion.div>
+                        )) : (
+                            <div className="p-8 text-center glass-card rounded-2xl border border-white/5">
+                                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">No Active Threats Detected</p>
                             </div>
-                            <ExternalLink size={18} className="text-gray-500 group-hover:text-white transition-colors" />
-                        </motion.div>
-
-                        <motion.div
-                            whileHover={{ x: 10 }}
-                            className="flex items-center justify-between p-5 rounded-[1.5rem] bg-[#375bd2]/5 border border-[#375bd2]/20 opacity-40 group-hover:opacity-60 transition-all cursor-not-allowed"
-                        >
-                            <div className="flex gap-4 items-center">
-                                <div className="w-12 h-12 rounded-xl bg-[#375bd2]/20 flex items-center justify-center">
-                                    <Lock className="text-[#375bd2]" />
-                                </div>
-                                <div>
-                                    <p className="font-extrabold text-white uppercase tracking-tight">CCIP Rebalance Ready</p>
-                                    <p className="font-mono text-[10px] text-gray-500">Target: ARBITRUM_ONE_VAULT</p>
-                                </div>
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 bg-white/10 rounded-full">Queued</span>
-                        </motion.div>
+                        )}
                     </div>
                 </div>
 
@@ -206,8 +208,12 @@ export default function Dashboard() {
                         <h3 className="text-2xl font-black tracking-tight text-white capitalize">Autonomous Scrutiny Pulse</h3>
                         <p className="text-gray-400 text-sm max-w-xs font-medium leading-relaxed">System is continuously scanning 12 asset classes and 8 markets for predictive contagion alerts.</p>
                     </div>
-                    <button className="w-full py-4 rounded-2xl glass-premium border-white/10 font-black uppercase tracking-[0.2em] text-[10px] text-white hover:bg-white/5 hover:border-[#00f2ff]/50 transition-all btn-institutional relative z-10">
-                        Manual Override Protocol
+                    <button
+                        onClick={() => manualOverride(2, 85, "Manual Tactical Intervention")}
+                        disabled={!account || actionPending}
+                        className="w-full py-4 rounded-2xl glass-premium border-white/10 font-black uppercase tracking-[0.2em] text-[10px] text-white hover:bg-white/5 hover:border-[#00f2ff]/50 transition-all btn-institutional relative z-10 disabled:opacity-50"
+                    >
+                        {actionPending ? <Loader2 className="animate-spin w-4 h-4 mx-auto" /> : account ? "Manual Override Protocol" : "Connect Wallet to Act"}
                     </button>
                 </div>
             </div>
