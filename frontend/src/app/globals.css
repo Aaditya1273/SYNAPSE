@@ -1,24 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  /* Institutional Palette - HSL for precision */
-  --background: 232 40% 4%;
-  --foreground: 0 0% 100%;
+  /* Institutional Palette - Professional Light Theme */
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  /* Slate 950 */
 
-  --primary: 184 100% 50%;
-  /* #00f2ff */
-  --primary-glow: 184 100% 50% / 0.3;
+  --primary: 221 83% 53%;
+  /* Institutional Blue #2563EB */
+  --primary-faint: 221 83% 53% / 0.05;
 
-  --secondary: 225 65% 52%;
-  /* #375bd2 */
-  --accent: 347 100% 59%;
-  /* #ff2e5d */
+  --secondary: 215 25% 27%;
+  /* Slate 700 */
+  --accent: 0 84% 60%;
+  /* Alert Red #EF4444 */
 
-  --surface: 232 40% 7%;
-  --glass-bg: 232 40% 6% / 0.6;
-  --glass-border: 0 0% 100% / 0.08;
+  --border: 214 32% 91%;
+  /* Slate 200 */
+  --surface: 210 40% 98%;
+  /* Gray 50 */
 
-  --grid-color: 0 0% 100% / 0.03;
+  --grid-color: 214 32% 91% / 0.4;
 }
 
 @theme {
@@ -32,18 +34,7 @@ body {
   -webkit-font-smoothing: antialiased;
   position: relative;
   overflow-x: hidden;
-}
-
-/* World-Class Background Mesh */
-.bg-mesh-premium {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(circle at 0% 0%, hsla(var(--primary), 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 100% 0%, hsla(var(--secondary), 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 50% 100%, hsla(var(--accent), 0.05) 0%, transparent 40%),
-    hsl(var(--background));
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 .bg-grid-institutional {
@@ -51,89 +42,95 @@ body {
   inset: 0;
   background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(circle at center, black, transparent 80%);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(circle at center, black, transparent 90%);
+  pointer-events: none;
 }
 
 @layer utilities {
-  .glass-premium {
-    background: hsla(var(--glass-bg));
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid hsla(var(--glass-border));
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  .card-minimal {
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .glass-card {
-    background: linear-gradient(135deg, hsla(0, 0%, 100%, 0.05) 0%, hsla(0, 0%, 100%, 0) 100%);
-    backdrop-filter: blur(10px);
-    border: 1px solid hsla(var(--glass-border));
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .glass-card:hover {
-    border-color: hsla(var(--primary), 0.3);
-    background: hsla(0, 0%, 100%, 0.07);
-    transform: translateY(-4px) scale(1.01);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-  }
-
-  .text-glow-cyan {
-    text-shadow: 0 0 15px hsla(var(--primary), 0.5);
+  .card-minimal:hover {
+    border-color: hsl(var(--primary) / 0.4);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+    transform: translateY(-2px);
   }
 
   .btn-institutional {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    border: 1px solid hsl(var(--border));
+    background: white;
+    color: hsl(var(--foreground));
   }
 
-  .btn-institutional::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, hsla(var(--primary), 0.2), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
+  .btn-institutional:hover {
+    background: hsl(var(--primary-faint));
+    border-color: hsl(var(--primary) / 0.5);
+    color: hsl(var(--primary));
   }
 
-  .btn-institutional:hover::after {
-    transform: translateX(100%);
+  .btn-primary {
+    background: hsl(var(--primary));
+    color: white;
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background: hsl(var(--primary) / 0.9);
+    filter: brightness(1.1);
+    transform: scale(1.02);
+  }
+
+  .status-chip {
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-width: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
 }
 
-/* Custom Premium Scrollbar */
+/* Custom Scrollbar - Minimalist */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(var(--background));
+  background: hsl(var(--surface));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsla(var(--glass-border));
+  background: hsl(var(--border));
   border-radius: 10px;
+  border: 2px solid hsl(var(--surface));
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsla(var(--primary), 0.5);
+  background: hsl(var(--secondary) / 0.3);
 }
 
-@keyframes pulse-glow {
-
-  0%,
-  100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
+.text-institutional-blue {
+  color: hsl(var(--primary));
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
+.bg-institutional-blue {
+  background-color: hsl(var(--primary));
 }

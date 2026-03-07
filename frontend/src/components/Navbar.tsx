@@ -16,29 +16,34 @@ export function Navbar() {
     ];
 
     return (
-        <nav className="fixed top-0 w-full z-50 glass-premium border-b border-white/5 backdrop-blur-3xl px-8 py-5">
+        <nav className="fixed top-0 w-full z-50 bg-white border-b border-gray-100 shadow-sm px-8 py-4">
             <div className="max-w-7xl mx-auto flex justify-between items-center">
                 <Link href="/" className="flex items-center gap-3 group cursor-pointer">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#00f2ff] via-[#375bd2] to-[#ff2e5d] flex items-center justify-center font-bold shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform duration-500">
-                        <span className="text-white text-lg">A</span>
+                    <div className="w-9 h-9 rounded-lg bg-[#2563EB] flex items-center justify-center font-bold shadow-md shadow-blue-500/10 group-hover:scale-105 transition-all duration-300">
+                        <span className="text-white text-base">A</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-xl font-extrabold tracking-tighter text-white leading-none">AETHER<span className="text-[#00f2ff]">SENTINEL</span></span>
-                        <span className="text-[9px] font-bold text-[#ff2e5d] tracking-widest uppercase opacity-80">Institutional v2.4</span>
+                        <span className="text-lg font-black tracking-tighter text-[#0F172A] leading-none uppercase">Aether<span className="text-[#2563EB]">Sentinel</span></span>
+                        <span className="text-[8px] font-black text-gray-400 tracking-[0.2em] uppercase">Tactical Node v2.4</span>
                     </div>
                 </Link>
 
-                <div className="hidden md:flex gap-10 text-[11px] font-bold uppercase tracking-widest">
+                <div className="hidden md:flex gap-8 text-[11px] font-bold uppercase tracking-widest">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href;
                         return (
                             <Link
                                 key={item.name}
                                 href={item.href}
-                                className={`transition-all duration-300 relative group ${isActive ? 'text-[#00f2ff]' : 'text-gray-400 hover:text-white'}`}
+                                className={`transition-all duration-200 relative py-2 ${isActive ? 'text-[#2563EB]' : 'text-gray-500 hover:text-[#0F172A]'}`}
                             >
                                 {item.name}
-                                <span className={`absolute -bottom-1 left-0 h-[2px] bg-[#00f2ff] transition-all duration-300 ${isActive ? 'w-full shadow-[0_0_10px_rgba(0,242,255,0.5)]' : 'w-0 group-hover:w-full'}`}></span>
+                                {isActive && (
+                                    <motion.span
+                                        layoutId="nav-underline"
+                                        className="absolute -bottom-4 left-0 w-full h-[3px] bg-[#2563EB]"
+                                    />
+                                )}
                             </Link>
                         );
                     })}
@@ -48,7 +53,7 @@ export function Navbar() {
                     <button
                         onClick={account ? disconnect : connect}
                         disabled={walletLoading}
-                        className="hidden sm:block px-6 py-2.5 rounded-xl glass-premium border-white/10 text-[10px] font-bold uppercase tracking-widest hover:border-[#00f2ff]/50 hover:bg-white/5 transition-all btn-institutional"
+                        className="px-5 py-2.5 rounded-lg border border-gray-200 text-[10px] font-bold uppercase tracking-widest text-[#0F172A] hover:bg-gray-50 hover:border-gray-300 transition-all"
                     >
                         {walletLoading ? <Loader2 className="animate-spin w-4 h-4" /> : account ? `${account.slice(0, 6)}...${account.slice(-4)}` : "Connect Terminal"}
                     </button>
