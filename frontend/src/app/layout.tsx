@@ -18,13 +18,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${outfit.variable} ${firaCode.variable}`}>
-      <body className="antialiased min-h-screen">
-        <div className="bg-mesh-premium" />
-        <div className="bg-grid-institutional" />
+      <body className="antialiased min-h-screen bg-white">
 
         <Navbar />
 
-        <main className="relative pt-32 px-8 pb-16">
+        <main className="relative pt-32 pb-20">
           {children}
         </main>
       </body>

@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useWallet } from "@/lib/hooks";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
