@@ -83,7 +83,7 @@ export async function onDemoCron(runtime: Runtime<any>, _payload: CronPayload): 
             // In a real env, the report would be generated from the consensus data
         }).result();
 
-        runtime.log(`[Act] Isolation Report Dispatched to Registry. Pulse ID: ${toHex(reportResponse.data || new Uint8Array())}`);
+        runtime.log(`[Act] Isolation Report Dispatched to Registry. Pulse ID: ${toHex(reportResponse.txHash || new Uint8Array())}`);
 
         // --- ZK COMPLIANCE PROOF ---
         runtime.log("[Compliance] Generating Zero-Knowledge Proof for Institutional Registry...");

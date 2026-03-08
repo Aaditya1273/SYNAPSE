@@ -32,11 +32,11 @@ export async function onCCIPMigrationCron(runtime: Runtime<any>, _payload: CronP
 
     // In actual use, we'd use viem.encodeFunctionData
 
-    const [currentRiskScore] = decodeFunctionResult({
+    const currentRiskScore = decodeFunctionResult({
         abi,
         functionName: "riskScore",
         data: toHex(response.data),
-    }) as [bigint];
+    });
 
     runtime.log(`[CCIP] Current On-Chain Risk Score: ${currentRiskScore}`);
     const isCritical = currentRiskScore > BigInt(runtime.config.riskThreshold || 70);
@@ -66,11 +66,11 @@ export async function onNAVUpdateCron(runtime: Runtime<any>, _payload: CronPaylo
         }),
     }).result();
 
-    const [count] = decodeFunctionResult({
+    const count = decodeFunctionResult({
         abi,
         functionName: "totalSupply",
         data: toHex(response.data),
-    }) as [bigint];
+    });
 
     const nav = Number(count) / 1e18;
     runtime.log(`[NAV] Real-Time NAV Calculation: ${nav}`);

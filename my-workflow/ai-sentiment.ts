@@ -11,7 +11,7 @@ import {
 
 // ---------- Handlers ----------
 
-async function onSentimentCron(runtime: Runtime<any>, _payload: CronPayload): Promise<string> {
+export async function onSentimentCron(runtime: Runtime<any>, _payload: CronPayload): Promise<string> {
     runtime.log("Invoking Aegis AI Engine for REAL-TIME market sentiment analysis...");
 
     const httpClient = new HTTPClient();
