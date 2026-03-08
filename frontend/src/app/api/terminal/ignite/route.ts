@@ -9,8 +9,8 @@ export async function POST() {
     const scriptPath = '/home/bajrangi/Wins/SYNAPSE/frontend/scripts/tactical_ignite.js';
 
     if (platform === 'linux') {
-        // Wrap command for multiple Linux terminals
-        command = `gnome-terminal -- node ${scriptPath} || konsole -e node ${scriptPath} || xfce4-terminal -e "node ${scriptPath}" || xterm -e "node ${scriptPath}"`;
+        // Wayland/Kitty prioritization + common fallbacks
+        command = `kitty -- node ${scriptPath} || gnome-terminal -- node ${scriptPath} || konsole -e node ${scriptPath} || xfce4-terminal -e "node ${scriptPath}" || xterm -e "node ${scriptPath}"`;
     } else if (platform === 'darwin') {
         // macOS Terminal via AppleScript for reliability
         command = `osascript -e 'tell app "Terminal" to do script "node ${scriptPath}"' -e 'tell app "Terminal" to activate'`;

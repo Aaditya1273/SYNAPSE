@@ -25,6 +25,7 @@ contract OmniSentryCore is AccessControl, Pausable {
 
     event RiskStateUpdated(RiskLevel indexed level, uint256 score, string reason);
     event EmergencyActionTriggered(string actionType, address target);
+    event ManualOverride(uint8 level, uint256 score, string reason);
 
     constructor(address admin) {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
@@ -53,6 +54,30 @@ contract OmniSentryCore is AccessControl, Pausable {
         }
 
         emit RiskStateUpdated(_level, _score, _reason);
+    }
+
+    /**
+     * @dev Manually trigger a risk state override.
+     */
+    function manualOverride(
+        RiskLevel _level,
+        uint256 _score,
+        string calldata _reason
+    ) external onlyRole(RISK_ADMIN_ROLE) {
+        globalRiskState = RiskState({
+            currentLevel: _level,
+            riskScore: _score,
+            lastUpdated: block.timestamp,
+            reason: _reason
+        });
+
+        if (_level >= RiskLevel.HIGH) {
+            _pause();
+        } else if (paused()) {
+            _unpause();
+        }
+
+        emit ManualOverride(uint8(_level), _score, _reason);
     }
 
     /**
