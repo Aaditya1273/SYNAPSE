@@ -42,7 +42,7 @@ export default function NetworkPage() {
                     <div className="flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.3em] text-[#2563EB]">
                         <Satellite size={16} /> Protocol Orchestration Layer
                     </div>
-                    <h1 className="text-6xl font-black tracking-tighter text-white uppercase leading-[0.9] italic">
+                    <h1 className="text-6xl font-black tracking-tighter text-white uppercase leading-[0.9]">
                         Global <span className="text-[#2563EB]">Networking</span>
                     </h1>
                     <p className="text-gray-400 font-medium max-w-2xl text-sm leading-relaxed">
@@ -80,13 +80,13 @@ export default function NetworkPage() {
                         {/* Latency Widget */}
                         <div className="space-y-4">
                             <div className="flex justify-between items-end">
-                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Network Latency</span>
-                                <span className="text-lg font-black text-[#2563EB] tracking-tighter">{latency > 0 ? latency.toFixed(1) : "SYNC"}ms</span>
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Consensus Round-Trip</span>
+                                <span className="text-lg font-black text-[#2563EB] tracking-tighter">{latency > 0 ? latency.toFixed(0) : "SYNC"}ms</span>
                             </div>
                             <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                                 <motion.div
                                     className="h-full bg-[#2563EB]"
-                                    animate={{ width: `${(latency / 100) * 100}%` }}
+                                    animate={{ width: `${Math.min(100, (latency / 1200) * 100)}%` }}
                                     transition={{ type: "spring", stiffness: 100 }}
                                 />
                             </div>
@@ -95,18 +95,28 @@ export default function NetworkPage() {
                         {/* Node List */}
                         <div className="space-y-6 pt-6 border-t border-white/5">
                             <h4 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Active Edge Relays</h4>
-                            <div className="space-y-5">
+                            <div className="space-y-3">
                                 {[
-                                    { label: "Tokyo-Primary", status: "STABLE", color: "#10B981" },
-                                    { label: "London-Bridge", status: "NOMINAL", color: "#2563EB" },
-                                    { label: "NYC-Gateway", status: "STABLE", color: "#10B981" },
-                                    { label: "SG-Consensus", status: "SYNCING", color: "#F59E0B" },
+                                    { label: "Tokyo-Primary", status: "STABLE", color: "#10B981", hash: "0xTYO_10", offset: 12 },
+                                    { label: "London-Bridge", status: "NOMINAL", color: "#2563EB", hash: "0xLON_8B", offset: 5 },
+                                    { label: "NYC-Gateway", status: "STABLE", color: "#10B981", hash: "0xNYC_4F", offset: 28 },
+                                    { label: "SG-Consensus", status: "SYNCING", color: "#F59E0B", hash: "0xSGP_00", offset: 0 },
                                 ].map((node, i) => (
-                                    <div key={i} className="flex justify-between items-center group cursor-crosshair">
-                                        <span className="text-[11px] font-bold text-gray-500 uppercase tracking-tight group-hover:text-white transition-colors">{node.label}</span>
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: node.color, color: node.color }} />
-                                            <span className="text-[9px] font-black" style={{ color: node.color }}>{node.status}</span>
+                                    <div key={i} className="flex flex-col space-y-2 group cursor-crosshair p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-tight group-hover:text-white transition-colors">{node.label}</span>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: node.color, color: node.color }} />
+                                                <span className="text-[9px] font-black" style={{ color: node.color }}>{node.status}</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-between items-center text-[9px] font-mono text-gray-500 pt-2 border-t border-white/5">
+                                            <div className="flex items-center gap-1 text-[#2563EB]">
+                                                <Zap size={8} /> HASH: {node.hash}
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <Activity size={8} /> {node.status === "SYNCING" ? "SYNCING..." : (latency > 0 ? (latency + node.offset).toFixed(0) + "ms" : "SYNCING")}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -205,82 +215,108 @@ export default function NetworkPage() {
 
                         {/* Node Data Points - Absolute Positioned */}
                         <div className="absolute inset-0 z-20 pointer-events-none">
-                            {nodes.map((node, i) => (
-                                <motion.div
-                                    key={i}
-                                    style={{ left: `${node.x / 10}%`, top: `${node.y / 6}%` }}
-                                    className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3"
-                                    initial={{ scale: 0, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    transition={{ delay: i * 0.1, type: "spring", damping: 12 }}
-                                >
-                                    <div className="relative group/point">
-                                        {/* Diagnostic Ring */}
-                                        <div className="absolute inset-0 -m-3 rounded-full border border-blue-100 opacity-20 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" />
+                            {nodes.map((node, i) => {
+                                // Define dynamic node properties simulating live network state
+                                const isPrimary = i === 0;
+                                const isSyncing = i === 4; // Arbitrary node as syncing
+                                const nodeColor = isSyncing ? '#F59E0B' : (isPrimary ? '#2563EB' : '#10B981'); // Amber, Blue, Green
+                                const nodeHash = `0x${node.id.split('_')[1]}_${riskState?.score || (isPrimary ? '10' : '00')}`;
+                                const nodeLatency = isSyncing ? 'SYNCING...' : `${(latency > 0 ? latency + (i * 10) : 0).toFixed(0)}ms`;
 
-                                        {/* Core Point */}
-                                        <div className={`w-3 h-3 rounded-full ${latestLog && i === 0 ? 'bg-blue-600' : 'bg-blue-400'} shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-colors`} />
+                                return (
+                                    <motion.div
+                                        key={i}
+                                        style={{ left: `${node.x / 10}%`, top: `${node.y / 6}%` }}
+                                        className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3 z-30"
+                                        initial={{ scale: 0, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        transition={{ delay: i * 0.1, type: "spring", damping: 12 }}
+                                    >
+                                        <div className="relative group/point cursor-crosshair">
+                                            {/* Diagnostic Ring */}
+                                            <div
+                                                className="absolute inset-0 -m-3 rounded-full border opacity-20 group-hover/point:opacity-100 group-hover/point:scale-x-150 group-hover/point:scale-y-150 transition-all duration-300"
+                                                style={{ borderColor: nodeColor }}
+                                            />
 
-                                        {/* Real-Time Pulse for Active Consensus */}
-                                        {latestLog && i === 0 && (
-                                            <div className="absolute inset-0 rounded-full bg-blue-500 animate-ping opacity-75" />
-                                        )}
-                                    </div>
+                                            {/* Core Point */}
+                                            <div
+                                                className="w-3 h-3 rounded-full transition-colors relative z-10"
+                                                style={{
+                                                    backgroundColor: nodeColor,
+                                                    boxShadow: `0 0 20px ${nodeColor}80`
+                                                }}
+                                            />
 
-                                    {/* Tactial Data Label */}
-                                    <div className="px-4 py-2 bg-gray-900/80 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl flex flex-col items-start min-w-[120px]">
-                                        <div className="flex justify-between w-full items-center mb-1">
-                                            <span className="text-[9px] font-black text-white uppercase tracking-tighter">{node.id}</span>
-                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10B981]" />
-                                        </div>
-                                        <div className="space-y-0.5">
-                                            <div className="flex items-center gap-1.5 font-mono text-[7px] text-gray-500 font-bold uppercase">
-                                                <Activity size={8} /> latency: {latency > 0 ? latency.toFixed(1) : "SYNC"}ms
+                                            {/* Real-Time Pulse for Active Consensus */}
+                                            {latestLog && isPrimary && (
+                                                <div className="absolute inset-0 rounded-full animate-ping opacity-75" style={{ backgroundColor: nodeColor }} />
+                                            )}
+
+                                            {/* Hover Tooltip */}
+                                            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-4 opacity-0 pointer-events-none group-hover/point:opacity-100 group-hover/point:pointer-events-auto transition-all duration-300 flex flex-col items-center w-max z-50">
+                                                <div className="px-3 py-2 bg-[#0F172A]/90 backdrop-blur-xl border rounded-lg shadow-2xl flex flex-col gap-1" style={{ borderColor: `${nodeColor}40` }}>
+                                                    <div className="flex justify-between items-center gap-4 border-b pb-1 mb-1" style={{ borderColor: `${nodeColor}20` }}>
+                                                        <span className="text-[9px] font-black text-white uppercase tracking-wider">{node.id}</span>
+                                                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: nodeColor, boxShadow: `0 0 8px ${nodeColor}` }} />
+                                                    </div>
+                                                    <div className="flex items-center gap-2 font-mono text-[8px] font-bold text-gray-400">
+                                                        <Activity size={10} style={{ color: nodeColor }} /> {nodeLatency}
+                                                    </div>
+                                                    <div className="flex items-center gap-2 font-mono text-[8px] font-bold text-gray-400">
+                                                        <Zap size={10} style={{ color: nodeColor }} /> {nodeHash}
+                                                    </div>
+                                                </div>
+                                                {/* Tooltip Arrow */}
+                                                <div className="w-2 h-2 rotate-45 bg-[#0F172A]/90 border-r border-b -mt-1" style={{ borderColor: `${nodeColor}40` }} />
                                             </div>
-                                            <div className="flex items-center gap-1.5 font-mono text-[7px] text-[#2563EB] font-black">
-                                                <Zap size={8} /> HASH: 0x{node.id.split('_')[1]}_{riskState?.score || '00'}
-                                            </div>
                                         </div>
-                                    </div>
-                                </motion.div>
-                            ))}
+                                    </motion.div>
+                                )
+                            })}
                         </div>
 
-                        {/* Dynamic Log Feed Overlay (Top Right of Mesh) */}
-                        <div className="absolute top-12 right-12 z-20 w-72 space-y-4">
-                            <div className="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2 border-b border-white/5 pb-2">Stream: On-Chain Correlation</div>
-                            {logs.slice(0, 3).map((log, i) => (
-                                <motion.div
-                                    key={log.id}
-                                    initial={{ x: 20, opacity: 0 }}
-                                    animate={{ x: 0, opacity: 1 }}
-                                    className="p-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/5 shadow-sm space-y-2 group relative"
-                                >
-                                    <div className="flex justify-between items-start">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-[9px] font-black text-[#2563EB] uppercase tracking-tighter">SIG_#{log.id.slice(-4)}</span>
-                                            {log.id.startsWith('CRE-') && (
-                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 border border-blue-100/50">
-                                                    <Cpu size={8} className="text-blue-500" />
-                                                    <span className="text-[6px] font-black text-blue-600 uppercase">CRE</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <span className="text-[8px] text-gray-600 font-bold uppercase">{new Date().toLocaleTimeString()}</span>
-                                    </div>
-                                    <p className="text-[10px] font-black text-white truncate uppercase tracking-tight pr-8">
-                                        {log.event.replace("Manual Override: ", "").replace("CRE Consensus: ", "")}
-                                    </p>
+                        {/* Dynamic Log Feed Overlay (Top Right of Mesh hidden behind Info Icon) */}
+                        <div className="absolute top-12 right-12 z-30 group flex flex-col items-end">
+                            <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 group-hover:bg-[#2563EB] group-hover:border-[#2563EB] group-hover:text-white transition-all cursor-help shadow-lg backdrop-blur-xl">
+                                <Info size={18} />
+                            </div>
 
-                                    {log.id.startsWith('CRE-') && (
-                                        <div className="absolute right-4 bottom-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <div className="p-1 rounded bg-gray-900 text-[8px] text-white font-bold flex items-center gap-1 shadow-2xl">
-                                                <Info size={10} /> CRE Consensus Active
+                            <div className="w-72 space-y-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 absolute top-full right-0 mt-4 origin-top-right">
+                                <div className="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2 border-b border-white/5 pb-2 text-right">Stream: On-Chain Correlation</div>
+                                {logs.slice(0, 3).map((log, i) => (
+                                    <motion.div
+                                        key={log.id}
+                                        initial={{ x: 20, opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        className="p-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/5 shadow-sm space-y-2 group relative"
+                                    >
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[9px] font-black text-[#2563EB] uppercase tracking-tighter">SIG_#{log.id.slice(-4)}</span>
+                                                {log.id.startsWith('CRE-') && (
+                                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 border border-blue-100/50">
+                                                        <Cpu size={8} className="text-blue-500" />
+                                                        <span className="text-[6px] font-black text-blue-600 uppercase">CRE</span>
+                                                    </div>
+                                                )}
                                             </div>
+                                            <span className="text-[8px] text-gray-600 font-bold uppercase">{new Date().toLocaleTimeString()}</span>
                                         </div>
-                                    )}
-                                </motion.div>
-                            ))}
+                                        <p className="text-[10px] font-black text-white truncate uppercase tracking-tight pr-8">
+                                            {log.event.replace("Manual Override: ", "").replace("CRE Consensus: ", "")}
+                                        </p>
+
+                                        {log.id.startsWith('CRE-') && (
+                                            <div className="absolute right-4 bottom-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="p-1 rounded bg-gray-900 text-[8px] text-white font-bold flex items-center gap-1 shadow-2xl">
+                                                    <Info size={10} /> CRE Consensus Active
+                                                </div>
+                                            </div>
+                                        )}
+                                    </motion.div>
+                                ))}
+                            </div>
                         </div>
 
                         {/* Legend */}
@@ -341,6 +377,6 @@ export default function NetworkPage() {
                     </div>
                 </section>
             </main>
-        </div>
+        </div >
     );
 }

@@ -63,14 +63,14 @@ export function Navbar() {
                         <button
                             onClick={connectTerminal}
                             disabled={walletLoading || terminalConnected}
-                            className={`px-5 py-2.5 rounded-lg border text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${terminalConnected
-                                ? 'bg-emerald-50 border-emerald-100 text-emerald-600'
-                                : 'bg-white border-gray-200 text-[#0F172A] hover:bg-gray-50 hover:border-gray-300'
+                            className={`px-5 py-2.5 rounded-lg border text-[10px] font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-2 ${terminalConnected
+                                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                                : 'bg-white/5 border-white/10 text-white hover:bg-blue-600 hover:border-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 active:scale-95'
                                 }`}
                         >
                             {terminalConnected ? (
                                 <>
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10B981]" />
                                     Terminal Active
                                 </>
                             ) : "Connect Terminal"}
@@ -81,10 +81,10 @@ export function Navbar() {
                     <div className="institutional-connect">
                         <ConnectButton
                             client={client}
-                            theme={navTheme === "dark" ? "dark" : "dark"}
+                            theme="dark"
                             chain={tenderlyChain}
                             connectButton={{
-                                className: `institutional-btn-connect !rounded-xl !px-6 !py-2.5 !text-[11px] !font-black !uppercase !tracking-widest transition-all ${navTheme === "dark" ? "!bg-white !text-[#020617] hover:!bg-blue-50" : "!bg-blue-600 !text-white hover:!bg-blue-700"}`,
+                                className: `institutional-btn-connect !rounded-xl !px-6 !py-2.5 !text-[11px] !font-black !uppercase !tracking-widest transition-all hover:-translate-y-0.5 active:scale-95 ${navTheme === "dark" ? "!bg-white/5 !text-white !border !border-white/10 hover:!bg-white/10" : "!bg-blue-600 !text-white hover:!bg-blue-700"}`,
                                 label: "Access Node"
                             }}
                             detailsButton={{

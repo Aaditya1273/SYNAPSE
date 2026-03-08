@@ -28,7 +28,7 @@ export default function Compliance() {
     const stats = [
         { label: "Active Proofs", value: auditLogs.length.toLocaleString(), trend: "VERIFIED", color: "#2563EB" },
         { label: "Validation Score", value: auditLogs.length > 5 ? "100%" : auditLogs.length > 0 ? "98%" : "0%", trend: "OPTIMAL", color: "#10B981" },
-        { label: "Proof Latency", value: latency > 0 ? `${latency.toFixed(1)}ms` : "SYNCING", trend: "ZK_STARK", color: "#6366f1" }
+        { label: "RPC Consensus", value: latency > 0 ? `${latency.toFixed(0)}ms` : "SYNCING", trend: "ZK_STARK", color: "#6366f1" }
     ];
 
     const exportAudit = () => {
@@ -50,7 +50,7 @@ export default function Compliance() {
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#2563EB]">
                         <Fingerprint size={14} /> Global Compliance Registry
                     </div>
-                    <h1 className="text-5xl font-black tracking-tighter text-white uppercase italic">
+                    <h1 className="text-5xl font-black tracking-tighter text-white uppercase">
                         ZK <span className="text-[#2563EB]">Compliance Vault</span>
                     </h1>
                     <p className="text-gray-400 max-w-xl font-medium leading-relaxed text-sm">
@@ -237,37 +237,48 @@ export default function Compliance() {
                                 <pre className="text-blue-100/80 selection:bg-blue-500/30">
                                     {activeTab === 'WORKFLOW_YAML' ? `
 # ==========================================================================
-# CRE WORKFLOW SETTINGS: omni-sentry-tenderly
+# CRE WORKFLOW DEFINITION: omnisentry-v4-main
 # ==========================================================================
 tenderly-testnet:
   user-workflow:
-    workflow-name: "omni-sentry-tenderly"
+    workflow-name: "omnisentry-v4-main"
   workflow-artifacts:
-    workflow-path: "./main.ts"
-    config-path: "./config.json"
-    secrets-path: ""
+    workflow-path: "./src/workflow.ts"
+    config-path: "./src/config.json"
+    secrets-path: "./src/secrets.env"
+  capabilities:
+    - type: "cron"
+      schedule: "*/30 * * * *"
+    - type: "http"
+      allowed-domains: ["api.coingecko.com", "api.grok.ai"]
 # ==========================================================================
                                     ` : `
-import { cre, Runner, type Runtime } from '@chainlink/cre-sdk';
+import { cre, type Runtime } from '@chainlink/cre-sdk';
 
 /**
- * @dev Autonomous Risk Assessment Handler
- * Triggered via CronCapability (Frequency: 30s)
+ * @dev Confidential Multi-AI Consensus Engine
+ * Aggregates risk signals from Gemini, Claude, and Grok
  */
-async function onRiskCron(runtime: Runtime<Config>) {
-    const riskData = await getTradFiRiskData(runtime);
-    const { level, score, reason } = calculateRiskScore(riskData);
+async function onRiskHeartbeat(runtime: Runtime<Config>) {
+    const signals = await Promise.all([
+        getGeminiAnalysis(runtime),
+        getClaudeAnalysis(runtime),
+        getGrokAnalysis(runtime)
+    ]);
     
-    // Propagate Consensus to OmniSentryCore
-    return JSON.stringify({ status: "RISK_OK", level, score });
+    const consensus = aggregateAI(signals);
+    
+    // Trigger on-chain Predict -> Isolate -> Heal workflow
+    if (consensus.score > 80) {
+        return runtime.evm.write("OmniSentryCore.emergencyStop", [consensus]);
+    }
+    
+    return cre.ok({ score: consensus.score });
 }
 
-function initWorkflow(config: Config) {
-    const cron = new cre.capabilities.CronCapability();
-    return [
-        cre.handler(cron.trigger({ schedule: config.scheduleRisk }), onRiskCron)
-    ];
-}
+export const workflow = [
+    cre.handler("cron", onRiskHeartbeat)
+];
                                     `}
                                 </pre>
                             </div>
@@ -277,15 +288,15 @@ function initWorkflow(config: Config) {
                                     <div className="space-y-3">
                                         <div className="space-y-1">
                                             <p className="text-[8px] text-gray-500 font-bold uppercase">Workflow_ID</p>
-                                            <p className="text-[10px] font-mono text-white truncate truncate-hover">omni-sentry-tenderly-v4</p>
+                                            <p className="text-[10px] font-mono text-white truncate truncate-hover">omni-sentry-v4-main-0xe4a1</p>
                                         </div>
                                         <div className="space-y-1">
                                             <p className="text-[8px] text-gray-500 font-bold uppercase">Capability_Handshake</p>
-                                            <p className="text-[10px] font-mono text-white">CronCapability v1.2</p>
+                                            <p className="text-[10px] font-mono text-white">ConfidentialCompute v1.0</p>
                                         </div>
                                         <div className="space-y-1">
                                             <p className="text-[8px] text-gray-500 font-bold uppercase">Registry_Identity</p>
-                                            <p className="text-[10px] font-mono text-white truncate">org_MYScnlRVqh...Pj</p>
+                                            <p className="text-[10px] font-mono text-white truncate">org_AetherSentinel_9936_v4</p>
                                         </div>
                                     </div>
                                 </div>

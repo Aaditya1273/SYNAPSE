@@ -12,6 +12,16 @@ export default function Dashboard() {
     const { logs: firewallLogs } = useAuditLogs();
     const btcData = useMarketData();
     const [overrideNote, setOverrideNote] = useState("");
+    const [overrideError, setOverrideError] = useState<string | null>(null);
+
+    const handleOverride = async () => {
+        setOverrideError(null);
+        try {
+            await manualOverride(2, 85, overrideNote || "Manual Intervention");
+        } catch (error: any) {
+            setOverrideError(error.message || "Transaction failed");
+        }
+    };
 
     const riskScore = riskState?.score ?? (isPaused ? 88 : 12);
     const lastUpdate = riskState ? new Date(riskState.lastUpdated * 1000).toLocaleTimeString() : "SYNCING...";
@@ -30,7 +40,7 @@ export default function Dashboard() {
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#2563EB]">
                         <Fingerprint size={14} /> Protocol Terminal
                     </div>
-                    <h1 className="text-5xl font-black tracking-tighter text-white uppercase italic">
+                    <h1 className="text-5xl font-black tracking-tighter text-white uppercase">
                         Protocol <span className="text-[#2563EB]">Dashboard</span>
                     </h1>
                     <p className="text-gray-400 font-medium max-w-xl text-sm leading-relaxed">
@@ -65,9 +75,9 @@ export default function Dashboard() {
                     <div className="flex flex-col md:flex-row items-end gap-12">
                         <div className="space-y-4">
                             <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest leading-none">Global Threat Score</div>
-                            <div className="text-8xl font-black text-white tracking-tighter group-hover:text-[#2563EB] transition-colors leading-[0.85]">
+                            <div className="text-8xl font-black text-white group-hover:text-[#2563EB] transition-colors flex items-baseline gap-6">
                                 {riskScore}
-                                <span className="text-2xl text-white/20 font-medium ml-2">/100</span>
+                                <span className="text-2xl text-white/20 font-medium">/100</span>
                             </div>
                         </div>
 
@@ -228,23 +238,72 @@ export default function Dashboard() {
                     </div>
 
                     <div className="space-y-4">
+                        {overrideError && (
+                            <div className="bg-red-900/50 border border-red-500/50 text-red-200 text-[10px] font-bold px-4 py-3 rounded-lg flex items-center gap-2">
+                                <ShieldAlert size={14} /> {overrideError}
+                            </div>
+                        )}
                         <input
                             type="text"
-                            placeholder="State Reason..."
+                            placeholder="State Reason For Transaction..."
                             value={overrideNote}
                             onChange={(e) => setOverrideNote(e.target.value)}
                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white focus:ring-4 focus:ring-red-500/10 outline-none transition-all placeholder:text-gray-600 focus:border-red-500/50"
                         />
                         <button
-                            onClick={() => manualOverride(2, 85, overrideNote || "Manual Intervention")}
+                            onClick={handleOverride}
                             disabled={!account || pending || !overrideNote}
                             className="w-full py-4 rounded-xl bg-red-600 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-red-700 transition-all disabled:opacity-30 disabled:grayscale shadow-lg shadow-red-500/10"
                         >
-                            {pending ? <Loader2 className="animate-spin" size={16} /> : "Trigger Isolation"}
+                            {pending ? <Loader2 className="animate-spin" size={16} /> : "TRIGGER ISOLATION"}
                         </button>
                     </div>
                 </div>
             </div>
+
+            {/* Overrride Error Modal Overlay */}
+            {overrideError && overrideError.includes("ISOLATION_ACTIVE") && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="bg-[#0f172a] border border-red-500/50 p-8 rounded-3xl max-w-md w-full shadow-2xl shadow-red-500/10 space-y-6"
+                    >
+                        <div className="flex justify-between items-start">
+                            <div className="flex items-center gap-3 text-red-500">
+                                <ShieldAlert size={24} className="animate-pulse" />
+                                <h3 className="text-xl font-black uppercase tracking-widest">Transaction Rejected</h3>
+                            </div>
+                            <button
+                                onClick={() => setOverrideError(null)}
+                                className="text-gray-500 hover:text-white transition-colors"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div className="space-y-4 text-sm font-medium text-gray-400">
+                            <p className="text-white">
+                                The Smart Contract has actively rejected this transaction manually overriding the state.
+                            </p>
+                            <p>
+                                <strong className="text-red-400 uppercase text-xs tracking-wider">Reason:</strong><br />
+                                Global Risk Score exceeds threshold. The OmniSentryCore Vault is currently in <span className="text-red-500 font-black">ISOLATION_ACTIVE</span> mode via cryptographic consensus.
+                            </p>
+                            <p className="text-[10px] text-gray-500 uppercase tracking-widest border-t border-white/10 pt-4">
+                                Error Code: EnforcedPause()
+                            </p>
+                        </div>
+
+                        <button
+                            onClick={() => setOverrideError(null)}
+                            className="w-full py-3 bg-white/5 hover:bg-white/10 text-white font-bold uppercase tracking-widest text-xs rounded-xl transition-colors border border-white/10"
+                        >
+                            Acknowledge
+                        </button>
+                    </motion.div>
+                </div>
+            )}
         </div>
     );
 }

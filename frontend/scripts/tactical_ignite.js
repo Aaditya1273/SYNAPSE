@@ -112,7 +112,9 @@ async function fetchTelemetry() {
             console.log(`${colors.gray}Live polling active (10s interval). Press Ctrl+C to terminate.${colors.reset}`);
 
         } catch (error) {
-            console.log(`${colors.red}\n[!] TELEMETRY ERROR: ${error.message}${colors.reset}`);
+            console.log(`${colors.red}\n[!] TELEMETRY ERROR: Connection Timeout.${colors.reset}`);
+            console.log(`${colors.yellow}[?] TROUBLESHOOTING: Check if Tenderly Virtual Network (ID: 9936) is active.${colors.reset}`);
+            console.log(`${colors.gray}Attempting reconnect in 10s...${colors.reset}`);
         }
     };
 
