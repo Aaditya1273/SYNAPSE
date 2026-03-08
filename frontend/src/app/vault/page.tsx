@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FileText, Download, ExternalLink, Calendar, Search, Fingerprint } from "lucide-react";
+import { FileText, Download, ExternalLink, Calendar, Search, Fingerprint, Cpu } from "lucide-react";
 import { useAetherState, useAuditLogs } from "@/lib/hooks";
 
 export default function Compliance() {
@@ -78,23 +78,53 @@ export default function Compliance() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                {/* Tactical Stats */}
-                <div className="md:col-span-1 space-y-4">
-                    {stats.map((stat, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            className="p-8 card-minimal flex flex-col justify-between h-32"
-                        >
-                            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-none">{stat.label}</span>
-                            <div className="flex items-end justify-between">
-                                <p className="text-3xl font-black text-[#0F172A] tracking-tighter">{stat.value}</p>
-                                <span className="text-[10px] font-black uppercase tracking-tighter" style={{ color: stat.color }}>{stat.trend}</span>
-                            </div>
-                        </motion.div>
-                    ))}
+                {/* Tactical Stats & Live Proof Stream */}
+                <div className="md:col-span-1 space-y-8">
+                    <div className="space-y-4">
+                        {stats.map((stat, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                className="p-8 card-minimal flex flex-col justify-between h-32"
+                            >
+                                <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-none">{stat.label}</span>
+                                <div className="flex items-end justify-between">
+                                    <p className="text-3xl font-black text-[#0F172A] tracking-tighter">{stat.value}</p>
+                                    <span className="text-[10px] font-black uppercase tracking-tighter" style={{ color: stat.color }}>{stat.trend}</span>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    {/* Live Proof Stream Overlay */}
+                    <div className="p-8 rounded-[2rem] bg-gray-50/50 border border-gray-100/50 space-y-6">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex justify-between items-center border-b border-gray-100 pb-3">
+                            <span>Recent Proof Stream</span>
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        </div>
+                        <div className="space-y-4">
+                            {onChainLogs.slice(0, 3).map((log, i) => (
+                                <motion.div
+                                    key={log.id}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="space-y-2 group cursor-pointer"
+                                    onClick={() => log.txHash && window.open(`https://dashboard.tenderly.co/explorer/vnet/ddf4998e-00a6-47cd-b249-8c1018222361/tx/${log.txHash}`, '_blank')}
+                                >
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[8px] font-black text-[#2563EB] uppercase tracking-tighter">SIG_#{log.id.split('-')[1]}</span>
+                                        <span className="text-[7px] text-gray-400 font-bold uppercase">SEC_VERIFIED</span>
+                                    </div>
+                                    <p className="text-[10px] font-black text-[#0F172A] uppercase tracking-tight truncate group-hover:text-[#2563EB] transition-colors">
+                                        {log.event.replace("Manual Override: ", "")}
+                                    </p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Audit Registry */}
@@ -132,17 +162,20 @@ export default function Compliance() {
                                             </div>
                                         </td>
                                         <td className="px-8 py-5">
-                                            <span className="font-bold text-[#0F172A]">{log.event}</span>
+                                            <span className="font-bold text-[#0F172A] flex items-center gap-2">
+                                                {log.id.startsWith('CRE-') && <Cpu size={12} className="text-[#2563EB]" />}
+                                                {log.event.replace("CRE Consensus: ", "").replace("Manual Override: ", "")}
+                                            </span>
                                         </td>
                                         <td className="px-8 py-5">
-                                            <span className="px-2 py-1 rounded-md bg-emerald-50 text-emerald-600 text-[9px] font-black border border-emerald-100 uppercase tracking-widest">
-                                                VERIFIED
+                                            <span className={`px-2 py-1 rounded-md text-[9px] font-black border uppercase tracking-widest ${log.id.startsWith('CRE-') ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
+                                                {log.id.startsWith('CRE-') ? 'CRE_SYNC' : 'OPERATOR'}
                                             </span>
                                         </td>
                                         <td className="px-8 py-5 text-right">
                                             {log.txHash ? (
                                                 <a
-                                                    href={`https://virtual.sepeth.tenderly.co/tx/${log.txHash}`}
+                                                    href={`https://dashboard.tenderly.co/explorer/vnet/ddf4998e-00a6-47cd-b249-8c1018222361/tx/${log.txHash}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#2563EB] hover:border-blue-100 hover:bg-white hover:shadow-sm transition-all ml-auto"

@@ -8,7 +8,7 @@ import { useAetherState, useWallet, useAetherActions, useAuditLogs } from "@/lib
 export default function Dashboard() {
     const { isPaused, riskState, loading } = useAetherState();
     const { account } = useWallet();
-    const { manualOverride, pending } = useAetherActions(null, account);
+    const { manualOverride, pending } = useAetherActions();
     const { logs: firewallLogs } = useAuditLogs();
     const [overrideNote, setOverrideNote] = useState("");
 
@@ -129,8 +129,35 @@ export default function Dashboard() {
                         ))}
                     </div>
 
-                    <div className="mt-6 p-4 rounded-xl bg-gray-950 text-[10px] font-mono text-gray-400">
-                        <span className="text-[#2563EB] mr-2">ORACLE:</span> {riskState?.reason || "Nominal state detected..."}
+                    <div className="mt-8 space-y-4">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex justify-between items-center border-b border-gray-50 pb-2">
+                            <span>Tactical Command Stream</span>
+                            <div className="flex gap-1">
+                                <span className="w-1 h-1 rounded-full bg-[#2563EB] animate-pulse" />
+                                <span className="w-1 h-1 rounded-full bg-[#2563EB] animate-pulse delay-75" />
+                                <span className="w-1 h-1 rounded-full bg-[#2563EB] animate-pulse delay-150" />
+                            </div>
+                        </div>
+                        <div className="space-y-3">
+                            {firewallLogs.slice(0, 3).map((log: any, i: number) => (
+                                <motion.div
+                                    key={log.id}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="p-3 rounded-xl bg-gray-50/50 border border-gray-100 flex justify-between items-center group cursor-pointer hover:bg-white hover:shadow-sm transition-all"
+                                    onClick={() => log.txHash && window.open(`https://dashboard.tenderly.co/explorer/vnet/ddf4998e-00a6-47cd-b249-8c1018222361/tx/${log.txHash}`, '_blank')}
+                                >
+                                    <div className="flex flex-col gap-0.5">
+                                        <span className="text-[8px] font-black text-[#2563EB] uppercase tracking-tighter">SIG_#{log.id.split('-')[1]}</span>
+                                        <span className="text-[10px] font-bold text-[#0F172A] uppercase tracking-tight truncate max-w-[150px]">
+                                            {log.event.replace("Manual Override: ", "")}
+                                        </span>
+                                    </div>
+                                    <ExternalLink size={10} className="text-gray-300 group-hover:text-[#2563EB]" />
+                                </motion.div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -153,16 +180,27 @@ export default function Dashboard() {
                         {firewallLogs.length > 0 ? firewallLogs.map((log: { event: string; id: string; txHash?: string }, i: number) => (
                             <div
                                 key={i}
-                                onClick={() => log.txHash && window.open(`https://virtual.sepeth.tenderly.co/tx/${log.txHash}`, '_blank')}
+                                onClick={() => log.txHash && window.open(`https://dashboard.tenderly.co/explorer/vnet/ddf4998e-00a6-47cd-b249-8c1018222361/tx/${log.txHash}`, '_blank')}
                                 className="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition-all cursor-pointer group"
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center border border-gray-100 group-hover:border-red-100">
-                                        <ShieldAlert size={14} className="text-red-500" />
+                                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center border border-gray-100 group-hover:border-blue-100 transition-colors">
+                                        {log.id.startsWith('CRE-') ? (
+                                            <Cpu size={14} className="text-[#2563EB]" />
+                                        ) : (
+                                            <ShieldAlert size={14} className="text-red-500" />
+                                        )}
                                     </div>
                                     <div>
-                                        <p className="font-extrabold text-[11px] text-[#0F172A] uppercase tracking-tight leading-tight">{log.event}</p>
-                                        <p className="font-mono text-[9px] text-gray-400">{log.id}</p>
+                                        <p className={`font-extrabold text-[11px] uppercase tracking-tight leading-tight ${log.id.startsWith('CRE-') ? 'text-[#2563EB]' : 'text-[#0F172A]'}`}>
+                                            {log.event.replace("CRE Consensus: ", "").replace("Manual Override: ", "")}
+                                        </p>
+                                        <p className="font-mono text-[9px] text-gray-400 flex items-center gap-1">
+                                            <span className={`px-1 rounded-[2px] text-[7px] text-white ${log.id.startsWith('CRE-') ? 'bg-blue-600' : 'bg-red-600'}`}>
+                                                {log.id.split('-')[0]}
+                                            </span>
+                                            {log.id}
+                                        </p>
                                     </div>
                                 </div>
                                 <ExternalLink size={14} className="text-gray-300 group-hover:text-[#2563EB]" />
