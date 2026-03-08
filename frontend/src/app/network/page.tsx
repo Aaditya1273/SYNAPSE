@@ -35,25 +35,25 @@ export default function NetworkPage() {
     const latestLog = logs[0] || null;
 
     return (
-        <div className="max-w-[1600px] mx-auto space-y-12 py-16 px-12 bg-white min-h-screen">
+        <div className="max-w-[1600px] mx-auto space-y-12 py-32 px-12 min-h-screen">
             {/* 1. TOP ORCHESTRATION HEADER */}
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 border-b border-gray-50 pb-16">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 border-b border-white/5 pb-16">
                 <div className="space-y-4">
                     <div className="flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.3em] text-[#2563EB]">
                         <Satellite size={16} /> Protocol Orchestration Layer
                     </div>
-                    <h1 className="text-6xl font-black tracking-tighter text-[#0F172A] uppercase leading-[0.9]">
+                    <h1 className="text-6xl font-black tracking-tighter text-white uppercase leading-[0.9] italic">
                         Global <span className="text-[#2563EB]">Networking</span>
                     </h1>
                     <p className="text-gray-400 font-medium max-w-2xl text-sm leading-relaxed">
-                        Authorized interface for real-time mesh correlation and cross-chain sentiment mapping.
-                        <span className="block mt-1 text-[#0F172A]/30 text-[10px] font-bold uppercase tracking-[0.2em]">Consensus Protocol: Active</span>
+                        Authorized interface for real-time mesh correlation and cross-chain sentiment mapping. <br />
+                        <span className="block mt-2 text-white/20 text-[10px] font-bold uppercase tracking-[0.2em]">Consensus Protocol: Active</span>
                     </p>
                 </div>
 
                 <div className="flex items-center gap-6">
-                    <div className="px-8 py-4 rounded-2xl border border-blue-50 bg-blue-50/20 flex items-center gap-4 shadow-sm">
-                        <div className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse" />
+                    <div className="px-8 py-4 rounded-2xl border border-blue-500/20 bg-blue-500/5 flex items-center gap-4 shadow-sm">
+                        <div className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse shadow-[0_0_8px_#2563EB]" />
                         <span className="text-[11px] font-black uppercase tracking-widest text-[#2563EB]">SENTINEL_MESH_ONLINE</span>
                     </div>
                 </div>
@@ -64,14 +64,14 @@ export default function NetworkPage() {
 
                 {/* SIDEBAR: CONTROL UNIT (3 Cols) */}
                 <aside className="lg:col-span-3 space-y-8">
-                    <div className="p-8 rounded-[2.5rem] bg-gray-50/50 border border-gray-100/50 space-y-10">
+                    <div className="p-8 rounded-[2.5rem] bg-white/2 border border-white/5 space-y-10">
                         <div className="space-y-6">
-                            <div className="w-12 h-12 rounded-2xl bg-gray-900 flex items-center justify-center shadow-xl shadow-gray-200">
+                            <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center shadow-xl shadow-blue-500/20">
                                 <Cpu className="text-white" size={24} />
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-sm font-black text-[#0F172A] uppercase tracking-wider">Tactical Node Sync</h3>
-                                <p className="text-[11px] font-bold text-gray-400 leading-relaxed uppercase tracking-widest">
+                                <h3 className="text-sm font-black text-white uppercase tracking-wider">Tactical Node Sync</h3>
+                                <p className="text-[11px] font-bold text-gray-600 leading-relaxed uppercase tracking-widest">
                                     Consensus Layer: Operational
                                 </p>
                             </div>
@@ -93,8 +93,8 @@ export default function NetworkPage() {
                         </div>
 
                         {/* Node List */}
-                        <div className="space-y-6 pt-6 border-t border-gray-100">
-                            <h4 className="text-[10px] font-black text-[#0F172A] uppercase tracking-[0.2em]">Active Edge Relays</h4>
+                        <div className="space-y-6 pt-6 border-t border-white/5">
+                            <h4 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Active Edge Relays</h4>
                             <div className="space-y-5">
                                 {[
                                     { label: "Tokyo-Primary", status: "STABLE", color: "#10B981" },
@@ -103,9 +103,9 @@ export default function NetworkPage() {
                                     { label: "SG-Consensus", status: "SYNCING", color: "#F59E0B" },
                                 ].map((node, i) => (
                                     <div key={i} className="flex justify-between items-center group cursor-crosshair">
-                                        <span className="text-[11px] font-bold text-gray-500 uppercase tracking-tight group-hover:text-[#0F172A] transition-colors">{node.label}</span>
+                                        <span className="text-[11px] font-bold text-gray-500 uppercase tracking-tight group-hover:text-white transition-colors">{node.label}</span>
                                         <div className="flex items-center gap-3">
-                                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: node.color }} />
+                                            <div className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: node.color, color: node.color }} />
                                             <span className="text-[9px] font-black" style={{ color: node.color }}>{node.status}</span>
                                         </div>
                                     </div>
@@ -114,7 +114,7 @@ export default function NetworkPage() {
                         </div>
                     </div>
 
-                    <div className="p-8 rounded-[2rem] border border-gray-100 space-y-4">
+                    <div className="p-8 rounded-[2rem] bg-white/2 border border-white/5 space-y-4">
                         <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
                             <Zap size={12} className="text-yellow-500" /> System Integrity
                         </div>
@@ -125,23 +125,23 @@ export default function NetworkPage() {
                 </aside>
 
                 {/* MAIN: MESH CONSOLE (9 Cols) */}
-                <section className="lg:col-span-9 bg-white border border-gray-100 rounded-[3rem] shadow-2xl shadow-gray-100/30 overflow-hidden flex flex-col min-h-[850px] relative">
+                <section className="lg:col-span-9 bg-[#0F172A]/40 backdrop-blur-2xl border border-white/5 rounded-[3rem] shadow-2xl shadow-black/50 overflow-hidden flex flex-col min-h-[850px] relative">
 
                     {/* Console Header */}
-                    <div className="px-12 py-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/10">
+                    <div className="px-12 py-8 border-b border-white/5 flex justify-between items-center bg-white/2">
                         <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center border border-blue-100 shadow-sm">
+                            <div className="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center border border-blue-500/20 shadow-sm">
                                 <Globe size={24} className="text-[#2563EB]" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-sm font-black text-[#0F172A] uppercase tracking-[0.25em]">Institutional
+                                <span className="text-sm font-black text-white uppercase tracking-[0.25em]">Institutional
                                     Connectivity Matrix</span>
-                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest"> Cross-chain volatility signals and asset correlation mappings.</span>
+                                <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest leading-relaxed"> Cross-chain volatility signals and asset correlation mappings.</span>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3 px-5 py-2 rounded-full bg-emerald-50 border border-emerald-100">
+                        <div className="flex items-center gap-3 px-5 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-sm">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-sm shadow-emerald-500/50" />
-                            <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Live Flow</span>
+                            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Live Flow</span>
                         </div>
                     </div>
 
@@ -150,10 +150,10 @@ export default function NetworkPage() {
 
                         {/* Title - Pushed to top-left for clear space */}
                         <div className="relative z-20 space-y-4 max-w-xl">
-                            <h2 className="text-5xl font-black text-[#0F172A] uppercase tracking-tighter leading-[0.9]">
+                            <h2 className="text-5xl font-black text-white uppercase tracking-tighter leading-[0.9]">
                                 <br />Propagation<br /><span className="text-[#2563EB]">Matrix</span>
                             </h2>
-                            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.35em] leading-relaxed">
+                            <p className="text-[11px] text-gray-500 font-bold uppercase tracking-[0.35em] leading-relaxed">
 
                             </p>
                         </div>
@@ -178,7 +178,7 @@ export default function NetworkPage() {
                                             key={`${i}-${j}`}
                                             x1={node.x} y1={node.y}
                                             x2={target.x} y2={target.y}
-                                            stroke="#0F172A"
+                                            stroke="white"
                                             strokeWidth="1.5"
                                             initial={{ pathLength: 0, opacity: 0 }}
                                             animate={{ pathLength: 1, opacity: 0.3 }}
@@ -228,13 +228,13 @@ export default function NetworkPage() {
                                     </div>
 
                                     {/* Tactial Data Label */}
-                                    <div className="px-4 py-2 bg-white/90 backdrop-blur-xl border border-gray-100 rounded-xl shadow-xl shadow-gray-200/20 flex flex-col items-start min-w-[120px]">
+                                    <div className="px-4 py-2 bg-gray-900/80 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl flex flex-col items-start min-w-[120px]">
                                         <div className="flex justify-between w-full items-center mb-1">
-                                            <span className="text-[9px] font-black text-[#0F172A] uppercase tracking-tighter">{node.id}</span>
-                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-sm" />
+                                            <span className="text-[9px] font-black text-white uppercase tracking-tighter">{node.id}</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10B981]" />
                                         </div>
                                         <div className="space-y-0.5">
-                                            <div className="flex items-center gap-1.5 font-mono text-[7px] text-gray-400 font-bold uppercase">
+                                            <div className="flex items-center gap-1.5 font-mono text-[7px] text-gray-500 font-bold uppercase">
                                                 <Activity size={8} /> latency: {latency > 0 ? latency.toFixed(1) : "SYNC"}ms
                                             </div>
                                             <div className="flex items-center gap-1.5 font-mono text-[7px] text-[#2563EB] font-black">
@@ -248,13 +248,13 @@ export default function NetworkPage() {
 
                         {/* Dynamic Log Feed Overlay (Top Right of Mesh) */}
                         <div className="absolute top-12 right-12 z-20 w-72 space-y-4">
-                            <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2 border-b border-gray-100 pb-2">Stream: On-Chain Correlation</div>
+                            <div className="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2 border-b border-white/5 pb-2">Stream: On-Chain Correlation</div>
                             {logs.slice(0, 3).map((log, i) => (
                                 <motion.div
                                     key={log.id}
                                     initial={{ x: 20, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
-                                    className="p-4 rounded-2xl bg-white/60 backdrop-blur-xl border border-gray-100 shadow-sm space-y-2 group relative"
+                                    className="p-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/5 shadow-sm space-y-2 group relative"
                                 >
                                     <div className="flex justify-between items-start">
                                         <div className="flex items-center gap-2">
@@ -266,9 +266,9 @@ export default function NetworkPage() {
                                                 </div>
                                             )}
                                         </div>
-                                        <span className="text-[8px] text-gray-400 font-bold uppercase">{new Date().toLocaleTimeString()}</span>
+                                        <span className="text-[8px] text-gray-600 font-bold uppercase">{new Date().toLocaleTimeString()}</span>
                                     </div>
-                                    <p className="text-[10px] font-black text-[#0F172A] truncate uppercase tracking-tight pr-8">
+                                    <p className="text-[10px] font-black text-white truncate uppercase tracking-tight pr-8">
                                         {log.event.replace("Manual Override: ", "").replace("CRE Consensus: ", "")}
                                     </p>
 
@@ -287,11 +287,11 @@ export default function NetworkPage() {
                         <div className="mt-auto relative z-20 flex gap-12 pb-16">
                             <div className="flex items-center gap-4">
                                 <div className="w-3 h-3 rounded-full bg-[#2563EB] shadow-xl shadow-blue-500/30" />
-                                <span className="text-[11px] font-black text-[#0F172A] uppercase tracking-widest">Active Relay</span>
+                                <span className="text-[11px] font-black text-white uppercase tracking-widest">Active Relay</span>
                             </div>
                             <div className="flex items-center gap-4">
                                 <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-xl shadow-emerald-500/30 animate-pulse" />
-                                <span className="text-[11px] font-black text-[#0F172A] uppercase tracking-widest">Consensus Locked</span>
+                                <span className="text-[11px] font-black text-white uppercase tracking-widest">Consensus Locked</span>
                             </div>
                         </div>
 
@@ -330,7 +330,7 @@ export default function NetworkPage() {
                                         <div className="h-10 w-[1px] bg-white/10" />
                                         <button
                                             onClick={() => latestLog.txHash && window.open(`https://dashboard.tenderly.co/explorer/vnet/ddf4998e-00a6-47cd-b249-8c1018222361/tx/${latestLog.txHash}`, '_blank')}
-                                            className="px-8 py-3 bg-white text-blue-600 rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-gray-50 transition-all shadow-xl shadow-black/10"
+                                            className="px-8 py-3 bg-white hover:bg-white/90 text-blue-600 rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center gap-3 transition-all shadow-xl shadow-black/10 active:scale-95"
                                         >
                                             View Proof <ExternalLink size={14} />
                                         </button>

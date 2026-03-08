@@ -1,8 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/lib/hooks";
-import { Loader2 } from "lucide-react";
+import { Loader2, Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ConnectButton } from "thirdweb/react";
@@ -13,7 +14,18 @@ import GooeyNav from "./GooeyNav";
 export function Navbar() {
     const { account, connect, disconnect, loading: walletLoading, terminalConnected, connectTerminal } = useWallet();
     const pathname = usePathname();
+    const [isScrolled, setIsScrolled] = useState(false);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 20);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    const isHome = pathname === "/";
+    const navTheme = isHome && !isScrolled ? "dark" : "light";
     const navItems = [
         { label: 'Network', href: '/network' },
         { label: 'Protocol', href: '/dashboard' },
@@ -23,15 +35,16 @@ export function Navbar() {
     const activeIndex = navItems.findIndex(item => item.href === pathname);
 
     return (
-        <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm px-8 py-2">
+        <nav className={`fixed top-8 left-1/2 -translate-x-1/2 w-[90%] max-w-7xl z-50 transition-all duration-700 px-8 py-4 rounded-2xl border ${isScrolled || !isHome ? "bg-[#020617]/20 backdrop-blur-3xl border-white/10 shadow-[0_20px_80px_rgba(0,0,0,0.6)]" : "bg-transparent border-transparent"
+            }`}>
             <div className="max-w-7xl mx-auto flex justify-between items-center">
                 <Link href="/" className="flex items-center gap-3 group cursor-pointer">
-                    <div className="w-9 h-9 rounded-lg bg-[#2563EB] flex items-center justify-center font-bold shadow-md shadow-blue-500/10 group-hover:scale-105 transition-all duration-300">
-                        <span className="text-white text-base">A</span>
+                    <div className="w-10 h-10 rounded-xl bg-[#2563EB] flex items-center justify-center font-bold shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-all duration-500">
+                        <span className="text-white text-lg">A</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-lg font-black tracking-tighter text-[#0F172A] leading-none uppercase">Aether<span className="text-[#2563EB]">Sentinel</span></span>
-                        <span className="text-[8px] font-black text-gray-400 tracking-[0.2em] uppercase">Tactical Node v2.4</span>
+                        <span className={`text-xl font-black tracking-tighter leading-none uppercase transition-colors duration-500 ${navTheme === "dark" ? "text-white" : "text-white"}`}>Aether<span className="text-[#2563EB]">Sentinel</span></span>
+                        <span className="text-[9px] font-black text-gray-400 tracking-[0.3em] uppercase opacity-60">Tactical Node v2.4</span>
                     </div>
                 </Link>
 
@@ -68,11 +81,11 @@ export function Navbar() {
                     <div className="institutional-connect">
                         <ConnectButton
                             client={client}
-                            theme="light"
+                            theme={navTheme === "dark" ? "dark" : "dark"}
                             chain={tenderlyChain}
                             connectButton={{
-                                className: " institutional-btn-connect",
-                                label: "Connect Wallet"
+                                className: `institutional-btn-connect !rounded-xl !px-6 !py-2.5 !text-[11px] !font-black !uppercase !tracking-widest transition-all ${navTheme === "dark" ? "!bg-white !text-[#020617] hover:!bg-blue-50" : "!bg-blue-600 !text-white hover:!bg-blue-700"}`,
+                                label: "Access Node"
                             }}
                             detailsButton={{
                                 className: "institutional-btn-details"

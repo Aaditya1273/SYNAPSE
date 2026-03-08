@@ -1,26 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  /* Institutional Palette - Professional Light Theme */
-  --background: 0 0% 100%;
-  --foreground: 222 47% 11%;
-  /* Slate 950 */
+  /* Institutional Midnight Palette */
+  --background: 222 47% 2%;
+  /* Deeper #010409 */
+  --foreground: 210 40% 98%;
+  /* Gray 50 */
 
   --primary: 221 83% 53%;
   /* Institutional Blue #2563EB */
   --primary-faint: 221 83% 53% / 0.05;
 
-  --secondary: 215 25% 27%;
-  /* Slate 700 */
+  --secondary: 222 47% 4%;
+  /* Midnight #020617 */
   --accent: 0 84% 60%;
   /* Alert Red #EF4444 */
 
-  --border: 214 32% 91%;
-  /* Slate 200 */
-  --surface: 210 40% 98%;
-  /* Gray 50 */
+  --border: 217 24% 10%;
+  /* Slate 900 */
+  --surface: 222 47% 3%;
+  /* Near Black */
 
-  --grid-color: 214 32% 91% / 0.4;
+  --grid-color: 214 32% 91% / 0.05;
 }
 
 @theme {
@@ -41,19 +42,28 @@ body {
 
 @layer utilities {
   .card-minimal {
-    background: white;
-    border: 1px solid hsl(var(--border));
-    border-radius: 1.25rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    background: rgba(15, 23, 42, 0.3);
+    backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 2rem;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.2),
+      0 2px 4px -1px rgba(0, 0, 0, 0.1),
+      inset 0 0 20px rgba(255, 255, 255, 0.02);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     z-index: 1;
   }
 
   .card-minimal:hover {
-    border-color: hsl(var(--primary) / 0.3);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-    transform: translateY(-4px);
+    border-color: rgba(37, 99, 235, 0.4);
+    background: rgba(15, 23, 42, 0.5);
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.5),
+      0 0 30px rgba(37, 99, 235, 0.1);
+    transform: translateY(-4px) scale(1.01);
   }
 
   .btn-institutional {
@@ -65,9 +75,10 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     transition: all 0.2s ease;
-    border: 1px solid hsl(var(--border));
-    background: white;
-    color: hsl(var(--foreground));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.02);
+    color: white;
+    backdrop-filter: blur(10px);
   }
 
   .btn-institutional:hover {

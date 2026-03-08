@@ -23,25 +23,25 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="max-w-7xl mx-auto space-y-16 py-12 px-8">
+        <div className="max-w-7xl mx-auto space-y-16 py-32 px-8">
             {/* Header - Minimalist */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-gray-100 pb-12">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-white/5 pb-12">
                 <div className="space-y-3">
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#2563EB]">
                         <Fingerprint size={14} /> Protocol Terminal
                     </div>
-                    <h1 className="text-5xl font-black tracking-tighter text-[#0F172A] uppercase">
+                    <h1 className="text-5xl font-black tracking-tighter text-white uppercase italic">
                         Protocol <span className="text-[#2563EB]">Dashboard</span>
                     </h1>
-                    <p className="text-gray-500 font-medium max-w-xl">
+                    <p className="text-gray-400 font-medium max-w-xl text-sm leading-relaxed">
                         Real-time risk orchestration for Institutional Vault 01. <br />
-                        <span className="text-[#0F172A]/40 text-[10px] font-bold uppercase tracking-widest">Oracle Sync: {lastUpdate}</span>
+                        <span className="text-white/20 text-[10px] font-bold uppercase tracking-widest mt-2 block">Oracle Sync: {lastUpdate}</span>
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className={`px-6 py-3 rounded-xl border flex items-center gap-3 transition-all ${isPaused ? 'border-red-100 bg-red-50 text-red-600' : 'border-emerald-100 bg-emerald-50 text-emerald-600'}`}>
+                    <div className={`px-6 py-3 rounded-xl border flex items-center gap-3 transition-all ${isPaused ? 'border-red-500/20 bg-red-500/5 text-red-500' : 'border-emerald-500/20 bg-emerald-500/5 text-emerald-500'}`}>
                         {loading ? (
-                            <Loader2 size={16} className="animate-spin" />
+                            <Loader2 size={16} className="animate-spin text-blue-500" />
                         ) : isPaused ? (
                             <><ShieldAlert size={16} className="animate-pulse" /> <span className="text-[10px] font-black uppercase tracking-widest">Isolation Active</span></>
                         ) : (
@@ -54,49 +54,49 @@ export default function Dashboard() {
             {/* Main Risk Display */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Risk Pulse Card - Minimalist */}
-                <div className="lg:col-span-2 card-minimal p-10 flex flex-col justify-between group">
+                <div className="lg:col-span-2 card-minimal p-10 flex flex-col justify-between group overflow-hidden">
                     <div className="flex justify-between items-start">
-                        <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100 mb-6">
+                        <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 mb-6 shadow-2xl shadow-blue-500/10">
                             <Activity className="text-[#2563EB]" size={24} />
                         </div>
-                        <span className="text-[10px] font-black text-[#2563EB] bg-blue-50 px-3 py-1.5 rounded-lg uppercase tracking-widest border border-blue-100">Live On-Chain Telemetry</span>
+                        <span className="text-[10px] font-black text-[#2563EB] bg-blue-500/5 px-3 py-1.5 rounded-lg uppercase tracking-widest border border-blue-500/10">Live On-Chain Telemetry</span>
                     </div>
 
                     <div className="flex flex-col md:flex-row items-end gap-12">
                         <div className="space-y-4">
-                            <div className="text-[11px] font-black text-gray-400 uppercase tracking-widest leading-none">Global Threat Score</div>
-                            <div className="text-8xl font-black text-[#0F172A] tracking-tighter hover:text-[#2563EB] transition-colors leading-[0.85]">
+                            <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest leading-none">Global Threat Score</div>
+                            <div className="text-8xl font-black text-white tracking-tighter group-hover:text-[#2563EB] transition-colors leading-[0.85]">
                                 {riskScore}
-                                <span className="text-2xl text-gray-300 font-medium ml-2">/100</span>
+                                <span className="text-2xl text-white/20 font-medium ml-2">/100</span>
                             </div>
                         </div>
 
                         <div className="flex-1 space-y-6 w-full">
-                            <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100">
-                                <div className="flex justify-between text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                            <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
+                                <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">
                                     <span>Containment Buffer</span>
                                     <span className="text-[#2563EB]">Efficient</span>
                                 </div>
-                                <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                                <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${riskScore}%` }}
-                                        className="h-full bg-[#2563EB]"
+                                        className="h-full bg-[#2563EB] shadow-[0_0_15px_rgba(37,99,235,0.5)]"
                                     />
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4 mt-10 pt-10 border-t border-gray-50">
+                    <div className="grid grid-cols-3 gap-4 mt-10 pt-10 border-t border-white/5">
                         {[
                             { label: "Predictive Drift", value: btcData ? (btcData.change24h > 0 ? "+" : "") + btcData.change24h.toFixed(2) + "%" : "SYNCING...", color: "#2563EB" },
                             { label: "Contagion risk", value: riskScore > 50 ? "Unstable" : "Nominal", color: riskScore > 50 ? "#EF4444" : "#10B981" },
-                            { label: "Consensus", value: "Verified", color: "#0F172A" }
+                            { label: "Consensus", value: "Verified", color: "#60A5FA" }
                         ].map((stat, i) => (
                             <div key={i} className="space-y-1">
-                                <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</div>
-                                <div className="text-sm font-black text-[#0F172A]" style={{ color: stat.color }}>{stat.value}</div>
+                                <div className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{stat.label}</div>
+                                <div className="text-sm font-black" style={{ color: stat.color }}>{stat.value}</div>
                             </div>
                         ))}
                     </div>
@@ -105,12 +105,12 @@ export default function Dashboard() {
                 {/* AI Agents Card */}
                 <div className="card-minimal p-8 flex flex-col">
                     <div className="flex items-center gap-3 mb-8">
-                        <div className="w-10 h-10 rounded-lg bg-gray-950 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
                             <Cpu className="text-white" size={20} />
                         </div>
                         <div className="space-y-0.5">
-                            <h2 className="text-sm font-black text-[#0F172A] uppercase tracking-wider">Multi-Agent Core</h2>
-                            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.2em]">Confidential Consensus</p>
+                            <h2 className="text-sm font-black text-white uppercase tracking-wider">Multi-Agent Core</h2>
+                            <p className="text-[9px] font-bold text-gray-500 uppercase tracking-[0.2em]">Confidential Consensus</p>
                         </div>
                     </div>
 
@@ -120,10 +120,10 @@ export default function Dashboard() {
                             { name: "Claude 3.5 Sonnet", status: getAIStatus(riskScore + (btcData ? Math.floor(btcData.change24h) : 0)).status, color: getAIStatus(riskScore + (btcData ? Math.floor(btcData.change24h) : 0)).color },
                             { name: "Grok-1 Tactical", status: getAIStatus(riskScore - (btcData ? Math.floor(btcData.change24h) : 0)).status, color: getAIStatus(riskScore - (btcData ? Math.floor(btcData.change24h) : 0)).color }
                         ].map((ai, i) => (
-                            <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-gray-50 hover:bg-gray-50 transition-colors">
-                                <span className="text-[11px] font-bold text-gray-600 uppercase tracking-tight">{ai.name}</span>
+                            <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-white/5 hover:bg-white/5 hover:border-blue-500/20 transition-all group">
+                                <span className="text-[11px] font-bold text-gray-400 uppercase tracking-tight group-hover:text-white transition-colors">{ai.name}</span>
                                 <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full" style={{ background: ai.color }} />
+                                    <div className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" style={{ background: ai.color, color: ai.color }} />
                                     <span className="text-[10px] font-black" style={{ color: ai.color }}>{ai.status}</span>
                                 </div>
                             </div>
@@ -131,12 +131,12 @@ export default function Dashboard() {
                     </div>
 
                     <div className="mt-8 space-y-4">
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex justify-between items-center border-b border-gray-50 pb-2">
+                        <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex justify-between items-center border-b border-white/5 pb-2">
                             <span>Tactical Command Stream</span>
                             <div className="flex gap-1">
-                                <span className="w-1 h-1 rounded-full bg-[#2563EB] animate-pulse" />
-                                <span className="w-1 h-1 rounded-full bg-[#2563EB] animate-pulse delay-75" />
-                                <span className="w-1 h-1 rounded-full bg-[#2563EB] animate-pulse delay-150" />
+                                <span className="w-1 h-1 rounded-full bg-[#2563EB] animate-pulse shadow-[0_0_8px_#2563EB]" />
+                                <span className="w-1 h-1 rounded-full bg-[#2563EB] animate-pulse delay-75 shadow-[0_0_8px_#2563EB]" />
+                                <span className="w-1 h-1 rounded-full bg-[#2563EB] animate-pulse delay-150 shadow-[0_0_8px_#2563EB]" />
                             </div>
                         </div>
                         <div className="space-y-3">
@@ -146,16 +146,16 @@ export default function Dashboard() {
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.1 }}
-                                    className="p-3 rounded-xl bg-gray-50/50 border border-gray-100 flex justify-between items-center group cursor-pointer hover:bg-white hover:shadow-sm transition-all"
+                                    className="p-3 rounded-xl bg-white/2 border border-white/5 flex justify-between items-center group cursor-pointer hover:bg-white/5 hover:border-blue-500/30 transition-all"
                                     onClick={() => log.txHash && window.open(`https://dashboard.tenderly.co/explorer/vnet/ddf4998e-00a6-47cd-b249-8c1018222361/tx/${log.txHash}`, '_blank')}
                                 >
                                     <div className="flex flex-col gap-0.5">
                                         <span className="text-[8px] font-black text-[#2563EB] uppercase tracking-tighter">SIG_#{log.id.split('-')[1]}</span>
-                                        <span className="text-[10px] font-bold text-[#0F172A] uppercase tracking-tight truncate max-w-[150px]">
+                                        <span className="text-[10px] font-bold text-white uppercase tracking-tight truncate max-w-[150px]">
                                             {log.event.replace("Manual Override: ", "")}
                                         </span>
                                     </div>
-                                    <ExternalLink size={10} className="text-gray-300 group-hover:text-[#2563EB]" />
+                                    <ExternalLink size={10} className="text-gray-600 group-hover:text-[#2563EB]" />
                                 </motion.div>
                             ))}
                         </div>
@@ -167,14 +167,14 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-10">
                 {/* Firewall Logs - Clean Bordered List */}
                 <div className="md:col-span-2 card-minimal flex flex-col">
-                    <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/2">
                         <div className="flex items-center gap-3">
                             <Lock size={16} className="text-[#2563EB]" />
-                            <span className="text-[11px] font-black text-[#0F172A] uppercase tracking-widest">Propagation Firewall Logs</span>
+                            <span className="text-[11px] font-black text-white uppercase tracking-widest">Propagation Firewall Logs</span>
                         </div>
                         <div className="flex gap-1">
                             <div className="w-1.5 h-1.5 rounded-full bg-[#2563EB]" />
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-200" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
                         </div>
                     </div>
                     <div className="p-2 overflow-y-auto max-h-[300px]">
@@ -182,10 +182,10 @@ export default function Dashboard() {
                             <div
                                 key={i}
                                 onClick={() => log.txHash && window.open(`https://dashboard.tenderly.co/explorer/vnet/ddf4998e-00a6-47cd-b249-8c1018222361/tx/${log.txHash}`, '_blank')}
-                                className="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition-all cursor-pointer group"
+                                className="flex items-center justify-between p-4 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5 transition-all cursor-pointer group"
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center border border-gray-100 group-hover:border-blue-100 transition-colors">
+                                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-blue-500/30 transition-colors">
                                         {log.id.startsWith('CRE-') ? (
                                             <Cpu size={14} className="text-[#2563EB]" />
                                         ) : (
@@ -193,7 +193,7 @@ export default function Dashboard() {
                                         )}
                                     </div>
                                     <div>
-                                        <p className={`font-extrabold text-[11px] uppercase tracking-tight leading-tight ${log.id.startsWith('CRE-') ? 'text-[#2563EB]' : 'text-[#0F172A]'}`}>
+                                        <p className={`font-extrabold text-[11px] uppercase tracking-tight leading-tight ${log.id.startsWith('CRE-') ? 'text-[#2563EB]' : 'text-white'}`}>
                                             {log.event.replace("CRE Consensus: ", "").replace("Manual Override: ", "")}
                                         </p>
                                         <p className="font-mono text-[9px] text-gray-400 flex items-center gap-1">
@@ -208,22 +208,22 @@ export default function Dashboard() {
                             </div>
                         )) : (
                             <div className="p-12 text-center">
-                                <Activity size={32} className="mx-auto text-gray-100 mb-4" />
-                                <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">All Propagation Paths Secure</p>
+                                <Activity size={32} className="mx-auto text-white/5 mb-4" />
+                                <p className="text-[10px] font-black text-white/10 uppercase tracking-widest">All Propagation Paths Secure</p>
                             </div>
                         )}
                     </div>
                 </div>
 
                 {/* Manual Override - Emergency Protocol */}
-                <div className="card-minimal border-red-100 bg-red-50/20 p-8 flex flex-col justify-center space-y-6">
+                <div className="card-minimal border-red-500/30 bg-red-500/5 p-8 flex flex-col justify-center space-y-6">
                     <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-red-600 text-[9px] font-black uppercase tracking-widest">
-                            <Zap size={14} className="animate-pulse" /> Emergency Control
+                        <div className="flex items-center gap-2 text-red-500 text-[9px] font-black uppercase tracking-widest">
+                            <Zap size={14} className="animate-pulse shadow-[0_0_8px_#EF4444]" /> Emergency Control
                         </div>
-                        <h3 className="text-xl font-black text-[#0F172A] uppercase">Isolation Protocol</h3>
-                        <p className="text-xs text-gray-500 font-medium leading-relaxed">
-                            Requires cryptographically signed justification to bypass autonomous logic.
+                        <h3 className="text-xl font-black text-white uppercase italic">Isolation Protocol</h3>
+                        <p className="text-xs text-gray-400 font-medium leading-relaxed">
+                            Requires cryptographically signed justification <br /> to bypass autonomous logic.
                         </p>
                     </div>
 
@@ -233,7 +233,7 @@ export default function Dashboard() {
                             placeholder="State Reason..."
                             value={overrideNote}
                             onChange={(e) => setOverrideNote(e.target.value)}
-                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-xs font-bold text-[#0F172A] focus:ring-4 focus:ring-red-100 outline-none transition-all placeholder:text-gray-300"
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white focus:ring-4 focus:ring-red-500/10 outline-none transition-all placeholder:text-gray-600 focus:border-red-500/50"
                         />
                         <button
                             onClick={() => manualOverride(2, 85, overrideNote || "Manual Intervention")}

@@ -20,12 +20,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${outfit.variable} ${firaCode.variable}`}>
-      <body className="antialiased min-h-screen bg-white">
+      <body className="antialiased min-h-screen bg-[#020617]">
         <ThirdwebProvider>
           <AuthGuard>
             <Navbar />
 
-            <main className="relative pt-32 pb-20">
+            <main className="relative">
               {children}
             </main>
           </AuthGuard>
