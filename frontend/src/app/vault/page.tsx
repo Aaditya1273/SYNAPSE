@@ -9,6 +9,7 @@ export default function Compliance() {
     const { riskState } = useAetherState();
     const { logs: onChainLogs } = useAuditLogs();
     const [searchTerm, setSearchTerm] = useState("");
+    const [activeTab, setActiveTab] = useState("WORKFLOW_YAML");
 
     const auditLogs = [
         ...(riskState ? [{
@@ -128,71 +129,178 @@ export default function Compliance() {
                 </div>
 
                 {/* Audit Registry */}
-                <div className="md:col-span-3 card-minimal overflow-hidden border-gray-100">
-                    <div className="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-                        <h3 className="text-sm font-black text-[#0F172A] flex items-center gap-3 uppercase tracking-widest">
-                            <Search size={16} className="text-[#2563EB]" /> Proof Generation Registry
-                        </h3>
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">Live Feed</span>
-                    </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="text-[10px] text-gray-400 uppercase tracking-widest border-b border-gray-50">
-                                    <th className="px-8 py-5 font-black">Audit_ID</th>
-                                    <th className="px-8 py-5 font-black">Timestamp</th>
-                                    <th className="px-8 py-5 font-black">Event Type</th>
-                                    <th className="px-8 py-5 font-black">ZK_Status</th>
-                                    <th className="px-8 py-5 font-black text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-50">
-                                {auditLogs.map((log, i) => (
-                                    <motion.tr
-                                        key={i}
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: i * 0.05 }}
-                                        className="text-xs hover:bg-gray-50/50 transition-colors group cursor-pointer"
-                                    >
-                                        <td className="px-8 py-5 font-mono text-[10px] text-gray-400 group-hover:text-[#2563EB] transition-colors">{log.id}</td>
-                                        <td className="px-8 py-5 text-gray-600 font-medium">
-                                            <div className="flex items-center gap-2">
-                                                <Calendar size={12} className="text-gray-300" /> {log.date}
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <span className="font-bold text-[#0F172A] flex items-center gap-2">
-                                                {log.id.startsWith('CRE-') && <Cpu size={12} className="text-[#2563EB]" />}
-                                                {log.event.replace("CRE Consensus: ", "").replace("Manual Override: ", "")}
-                                            </span>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <span className={`px-2 py-1 rounded-md text-[9px] font-black border uppercase tracking-widest ${log.id.startsWith('CRE-') ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
-                                                {log.id.startsWith('CRE-') ? 'CRE_SYNC' : 'OPERATOR'}
-                                            </span>
-                                        </td>
-                                        <td className="px-8 py-5 text-right">
-                                            {log.txHash ? (
-                                                <a
-                                                    href={`https://dashboard.tenderly.co/explorer/vnet/ddf4998e-00a6-47cd-b249-8c1018222361/tx/${log.txHash}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#2563EB] hover:border-blue-100 hover:bg-white hover:shadow-sm transition-all ml-auto"
-                                                >
-                                                    <ExternalLink size={14} />
-                                                </a>
-                                            ) : (
-                                                <div className="w-10 h-10 rounded-lg border border-dashed border-gray-100 flex items-center justify-center text-gray-200 ml-auto">
-                                                    <ExternalLink size={14} />
+                <div className="md:col-span-3 space-y-8">
+                    <div className="card-minimal overflow-hidden border-gray-100">
+                        <div className="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+                            <h3 className="text-sm font-black text-[#0F172A] flex items-center gap-3 uppercase tracking-widest">
+                                <Search size={16} className="text-[#2563EB]" /> Proof Generation Registry
+                            </h3>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">Live Feed</span>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="text-[10px] text-gray-400 uppercase tracking-widest border-b border-gray-50">
+                                        <th className="px-8 py-5 font-black">Audit_ID</th>
+                                        <th className="px-8 py-5 font-black">Timestamp</th>
+                                        <th className="px-8 py-5 font-black">Event Type</th>
+                                        <th className="px-8 py-5 font-black">ZK_Status</th>
+                                        <th className="px-8 py-5 font-black text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-50">
+                                    {auditLogs.map((log, i) => (
+                                        <motion.tr
+                                            key={i}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: i * 0.05 }}
+                                            className="text-xs hover:bg-gray-50/50 transition-colors group cursor-pointer"
+                                        >
+                                            <td className="px-8 py-5 font-mono text-[10px] text-gray-400 group-hover:text-[#2563EB] transition-colors">{log.id}</td>
+                                            <td className="px-8 py-5 text-gray-600 font-medium">
+                                                <div className="flex items-center gap-2">
+                                                    <Calendar size={12} className="text-gray-300" /> {log.date}
                                                 </div>
-                                            )}
-                                        </td>
-                                    </motion.tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                <span className="font-bold text-[#0F172A] flex items-center gap-2">
+                                                    {log.id.startsWith('CRE-') && <Cpu size={12} className="text-[#2563EB]" />}
+                                                    {log.event.replace("CRE Consensus: ", "").replace("Manual Override: ", "")}
+                                                </span>
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                <span className={`px-2 py-1 rounded-md text-[9px] font-black border uppercase tracking-widest ${log.id.startsWith('CRE-') ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
+                                                    {log.id.startsWith('CRE-') ? 'CRE_SYNC' : 'OPERATOR'}
+                                                </span>
+                                            </td>
+                                            <td className="px-8 py-5 text-right">
+                                                {log.txHash ? (
+                                                    <a
+                                                        href={`https://dashboard.tenderly.co/explorer/vnet/ddf4998e-00a6-47cd-b249-8c1018222361/tx/${log.txHash}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-[#2563EB] hover:border-blue-100 hover:bg-white hover:shadow-sm transition-all ml-auto"
+                                                    >
+                                                        <ExternalLink size={14} />
+                                                    </a>
+                                                ) : (
+                                                    <div className="w-10 h-10 rounded-lg border border-dashed border-gray-100 flex items-center justify-center text-gray-200 ml-auto">
+                                                        <ExternalLink size={14} />
+                                                    </div>
+                                                )}
+                                            </td>
+                                        </motion.tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+
+                    {/* Consensus Workflow Integrity Section */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-12 rounded-[3rem] bg-gray-950 text-white space-y-8 relative overflow-hidden"
+                    >
+                        <div className="absolute top-0 right-0 p-12 opacity-5">
+                            <Cpu size={200} />
+                        </div>
+
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 relative z-10">
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+                                        <FileText className="text-blue-400" size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-black uppercase tracking-tighter">Consensus Workflow Integrity</h3>
+                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Raw Chainlink CRE Orchestration Logic</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 p-1 bg-white/5 rounded-xl border border-white/10">
+                                {['WORKFLOW_YAML', 'CORE_LOGIC_TS'].map((tab) => (
+                                    <button
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab)}
+                                        className={`px-6 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-blue-600 text-white shadow-xl' : 'text-gray-400 hover:text-white'}`}
+                                    >
+                                        {tab.replace('_', '.')}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
+                            <div className="md:col-span-3 bg-black/40 rounded-2xl border border-white/5 p-8 font-mono text-[11px] h-[500px] overflow-y-auto custom-scrollbar">
+                                <pre className="text-blue-100/80 selection:bg-blue-500/30">
+                                    {activeTab === 'WORKFLOW_YAML' ? `
+# ==========================================================================
+# CRE WORKFLOW SETTINGS: omni-sentry-tenderly
+# ==========================================================================
+tenderly-testnet:
+  user-workflow:
+    workflow-name: "omni-sentry-tenderly"
+  workflow-artifacts:
+    workflow-path: "./main.ts"
+    config-path: "./config.json"
+    secrets-path: ""
+# ==========================================================================
+                                    ` : `
+import { cre, Runner, type Runtime } from '@chainlink/cre-sdk';
+
+/**
+ * @dev Autonomous Risk Assessment Handler
+ * Triggered via CronCapability (Frequency: 30s)
+ */
+async function onRiskCron(runtime: Runtime<Config>) {
+    const riskData = await getTradFiRiskData(runtime);
+    const { level, score, reason } = calculateRiskScore(riskData);
+    
+    // Propagate Consensus to OmniSentryCore
+    return JSON.stringify({ status: "RISK_OK", level, score });
+}
+
+function initWorkflow(config: Config) {
+    const cron = new cre.capabilities.CronCapability();
+    return [
+        cre.handler(cron.trigger({ schedule: config.scheduleRisk }), onRiskCron)
+    ];
+}
+                                    `}
+                                </pre>
+                            </div>
+                            <div className="md:col-span-1 space-y-6">
+                                <div className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                                    <h4 className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Workflow Metadata</h4>
+                                    <div className="space-y-3">
+                                        <div className="space-y-1">
+                                            <p className="text-[8px] text-gray-500 font-bold uppercase">Workflow_ID</p>
+                                            <p className="text-[10px] font-mono text-white truncate truncate-hover">omni-sentry-tenderly-v4</p>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-[8px] text-gray-500 font-bold uppercase">Capability_Handshake</p>
+                                            <p className="text-[10px] font-mono text-white">CronCapability v1.2</p>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-[8px] text-gray-500 font-bold uppercase">Registry_Identity</p>
+                                            <p className="text-[10px] font-mono text-white truncate">org_MYScnlRVqh...Pj</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="p-6 rounded-2xl bg-blue-600/10 border border-blue-500/20 space-y-3">
+                                    <div className="flex items-center gap-2 text-blue-400">
+                                        <Cpu size={14} />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Consensus Status</span>
+                                    </div>
+                                    <p className="text-[11px] font-medium text-blue-100 leading-relaxed">
+                                        Logic hash verified against registry. Autonomous execution is <span className="text-white font-bold">READY</span>.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
             </div>
         </div>

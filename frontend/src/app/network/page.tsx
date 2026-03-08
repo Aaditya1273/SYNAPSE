@@ -2,7 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Activity, ShieldAlert, Cpu, Globe, ExternalLink, Satellite, Zap } from "lucide-react";
+import {
+    Globe,
+    ShieldAlert,
+    Zap,
+    Activity,
+    ExternalLink,
+    Terminal,
+    Server,
+    Database,
+    Search,
+    Info,
+    Cpu,
+    Satellite
+} from "lucide-react";
 import { useAetherState, useAuditLogs } from "@/lib/hooks";
 
 export default function NetworkPage() {
@@ -249,15 +262,31 @@ export default function NetworkPage() {
                                     key={log.id}
                                     initial={{ x: 20, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
-                                    className="p-4 rounded-2xl bg-white/60 backdrop-blur-xl border border-gray-100 shadow-sm space-y-2 group"
+                                    className="p-4 rounded-2xl bg-white/60 backdrop-blur-xl border border-gray-100 shadow-sm space-y-2 group relative"
                                 >
                                     <div className="flex justify-between items-start">
-                                        <span className="text-[9px] font-black text-[#2563EB] uppercase tracking-tighter">SIG_#{log.id.slice(-4)}</span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[9px] font-black text-[#2563EB] uppercase tracking-tighter">SIG_#{log.id.slice(-4)}</span>
+                                            {log.id.startsWith('CRE-') && (
+                                                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 border border-blue-100/50">
+                                                    <Cpu size={8} className="text-blue-500" />
+                                                    <span className="text-[6px] font-black text-blue-600 uppercase">CRE</span>
+                                                </div>
+                                            )}
+                                        </div>
                                         <span className="text-[8px] text-gray-400 font-bold uppercase">{new Date().toLocaleTimeString()}</span>
                                     </div>
-                                    <p className="text-[10px] font-black text-[#0F172A] truncate uppercase tracking-tight">
-                                        {log.event.replace("Manual Override: ", "")}
+                                    <p className="text-[10px] font-black text-[#0F172A] truncate uppercase tracking-tight pr-8">
+                                        {log.event.replace("Manual Override: ", "").replace("CRE Consensus: ", "")}
                                     </p>
+
+                                    {log.id.startsWith('CRE-') && (
+                                        <div className="absolute right-4 bottom-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <div className="p-1 rounded bg-gray-900 text-[8px] text-white font-bold flex items-center gap-1 shadow-2xl">
+                                                <Info size={10} /> CRE Consensus Active
+                                            </div>
+                                        </div>
+                                    )}
                                 </motion.div>
                             ))}
                         </div>
@@ -284,15 +313,19 @@ export default function NetworkPage() {
                                 >
                                     <div className="flex items-center gap-6">
                                         <div className="p-3 bg-white/10 rounded-2xl border border-white/20 backdrop-blur-xl">
-                                            <ShieldAlert size={24} className="animate-pulse" />
+                                            {latestLog.id.startsWith('CRE-') ? <Cpu size={24} className="animate-pulse" /> : <ShieldAlert size={24} className="animate-pulse" />}
                                         </div>
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-3">
-                                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Tactical Alert Level 01</span>
-                                                <div className="px-2 py-0.5 rounded bg-white text-[8px] font-black text-blue-600 uppercase tracking-tighter">ON_CHAIN</div>
+                                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">
+                                                    {latestLog.id.startsWith('CRE-') ? "Autonomous Consensus Active" : "Tactical Alert Level 01"}
+                                                </span>
+                                                <div className="px-2 py-0.5 rounded bg-white text-[8px] font-black text-blue-600 uppercase tracking-tighter">
+                                                    {latestLog.id.startsWith('CRE-') ? "CRE_CORE" : "ON_CHAIN"}
+                                                </div>
                                             </div>
                                             <h3 className="text-xl font-black uppercase tracking-tight leading-none">
-                                                {latestLog.event.replace("Manual Override: ", "")}
+                                                {latestLog.event.replace("Manual Override: ", "").replace("CRE Consensus: ", "")}
                                             </h3>
                                         </div>
                                     </div>
