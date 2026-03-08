@@ -5667,6 +5667,11 @@ var LATEST_BLOCK_NUMBER = {
   absVal: Buffer.from([2]).toString("base64"),
   sign: "-1"
 };
+var encodeCallMsg = (payload) => ({
+  from: hexToBase64(payload.from),
+  to: hexToBase64(payload.to),
+  data: hexToBase64(payload.data)
+});
 var decodeJson = (input) => {
   const decoder = new TextDecoder("utf-8");
   const textBody = decoder.decode(input);
@@ -16729,7 +16734,7 @@ async function getTradFiRiskData(runtime2) {
       url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&include_24hr_change=true"
     }).result();
     const data = json(response);
-    const change = data.bitcoin.usd_24h_change;
+    const change = data.bitcoin?.usd_24h_change ?? 0;
     return {
       bankReserveRatio: change < -5 ? 0.05 : 0.09,
       marketSentiment: change < -2 ? "Negative" : "Neutral",
@@ -16783,11 +16788,11 @@ async function onCCIPMigrationCron(runtime2, _payload) {
     args: []
   });
   const response = await evmClient.callContract(runtime2, {
-    call: {
+    call: encodeCallMsg({
       from: "0x0000000000000000000000000000000000000000",
       to: runtime2.config.omniSentryCoreAddress,
       data: callData
-    }
+    })
   }).result();
   const currentRiskScore = decodeFunctionResult({
     abi,
@@ -16808,11 +16813,11 @@ async function onNAVUpdateCron(runtime2, _payload) {
     args: []
   });
   const response = await evmClient.callContract(runtime2, {
-    call: {
+    call: encodeCallMsg({
       from: "0x0000000000000000000000000000000000000000",
       to: runtime2.config.tokenizedTreasuryAddress,
       data: callData
-    }
+    })
   }).result();
   const count = decodeFunctionResult({
     abi,

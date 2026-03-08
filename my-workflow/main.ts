@@ -13,6 +13,7 @@ import {
 	hexToBase64,
 	bytesToHex,
 	TxStatus,
+	encodeCallMsg,
 } from '@chainlink/cre-sdk';
 import { z } from 'zod';
 import { parseAbi, decodeFunctionResult, encodeFunctionData, toHex, type Address } from 'viem';
@@ -123,11 +124,11 @@ async function onCCIPMigrationCron(runtime: Runtime<Config>, _payload: CronPaylo
 	});
 
 	const response = await evmClient.callContract(runtime, {
-		call: {
+		call: encodeCallMsg({
 			from: "0x0000000000000000000000000000000000000000" as Address,
 			to: runtime.config.omniSentryCoreAddress as Address,
 			data: callData,
-		},
+		}),
 	}).result();
 
 	const currentRiskScore = decodeFunctionResult({
@@ -155,11 +156,11 @@ async function onNAVUpdateCron(runtime: Runtime<Config>, _payload: CronPayload):
 	});
 
 	const response = await evmClient.callContract(runtime, {
-		call: {
+		call: encodeCallMsg({
 			from: "0x0000000000000000000000000000000000000000" as Address,
 			to: runtime.config.tokenizedTreasuryAddress as Address,
 			data: callData,
-		},
+		}),
 	}).result();
 
 	const count = decodeFunctionResult({
