@@ -1,0 +1,14 @@
+{
+  "network": "tenderly",
+  "timestamp": "2026-03-07T00:00:00.000Z",
+  "contracts": {
+    "MockUSDC": "0xE57f246BF27E79382C0E17222950415577eaCdBa",
+    "PrivateVault": "0xe7eafC035Ee1149416B41EB3f1CB6dcFb517c8F2"
+  },
+  "config": {
+    "oracle": "0xAd0799D4D6564c945C448D8BcFA890c41e111A98",
+    "confidentialCompute": "0xAd0799D4D6564c945C448D8BcFA890c41e111A98"
+  },
+  "status": "deployed",
+  "note": "Minting step skipped due to Tenderly quota. Contracts are deployed and functional."
+}

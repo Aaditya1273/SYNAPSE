@@ -1,0 +1,12 @@
+{
+  "schedule": "0 */10 * * * *",
+  "plaidBaseUrl": "https://sandbox.plaid.com",
+  "aiApiUrl": "https://api.groq.com/openai/v1/chat/completions",
+  "aiModel": "llama-3.3-70b-versatile",
+  "contractAddress": "0x49BdEEcB489E037C0f6928dEe6a043908b8d8877",
+  "privateVaultAddress": "0x49BdEEcB489E037C0f6928dEe6a043908b8d8877",
+  "chainSelectorName": "ethereum-testnet-sepolia",
+  "gasLimit": "500000",
+  "minCreditScore": 1,
+  "maxCreditScore": 100
+}

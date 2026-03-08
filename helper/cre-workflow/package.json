@@ -1,0 +1,20 @@
+{
+  "name": "crestai-cre-workflow",
+  "version": "1.0.0",
+  "description": "Chainlink Runtime Environment workflow for CrestAI credit scoring",
+  "main": "index.js",
+  "scripts": {
+    "simulate": "cre simulate",
+    "build": "tsc",
+    "test": "node test-workflow.js"
+  },
+  "dependencies": {
+    "@chainlink/cre-cli": "^1.0.0",
+    "@chainlink/functions-toolkit": "^0.2.0",
+    "ethers": "^6.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

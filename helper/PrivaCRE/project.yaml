@@ -1,0 +1,24 @@
+# ==========================================================================
+# CRE PROJECT SETTINGS FILE - PrivaCRE
+# ==========================================================================
+# Project-specific settings for Chainlink CRE workflows
+# This configures the DON family and RPC endpoints for the workflow
+
+default: &default
+  cre-cli:
+    don-family: "zone-a"  # Workflow DON Family
+  account:
+    workflow-owner-address: "0xAd0799D4D6564c945C448D8BcFA890c41e111A98"  # Your deployer address
+  rpcs:
+    - chain-name: ethereum-testnet-sepolia
+      url: https://virtual.sepolia.eu.rpc.tenderly.co/7611135a-8515-41d7-8146-9390be57f949
+    - chain-name: ethereum-mainnet
+      url: https://virtual.sepolia.eu.rpc.tenderly.co/7611135a-8515-41d7-8146-9390be57f949
+    - chain-name: ethereum-testnet-sepolia-arbitrum-1
+      url: https://sepolia-rollup.arbitrum.io/rpc
+    - chain-name: ethereum-testnet-sepolia-base-1
+      url: https://base-sepolia-rpc.publicnode.com
+
+staging-settings: *default
+
+production-settings: *default

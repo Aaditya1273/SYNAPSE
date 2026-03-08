@@ -1,0 +1,62 @@
+# Netlify Configuration for PrivaCRE
+# Privacy-First DeFi Lending Platform
+# Chainlink Convergence Hackathon 2025
+
+[build]
+  command = "npm install --legacy-peer-deps && npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20.19.0"
+  NEXT_TELEMETRY_DISABLED = "1"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Next.js Runtime Plugin
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Security Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Cache Next.js static assets
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache images
+[[headers]]
+  for = "/_next/image/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Environment Variables Required (Set in Netlify Dashboard):
+# 
+# Backend API Keys (NEVER expose to frontend):
+# - PLAID_CLIENT_ID
+# - PLAID_SECRET
+# - PLAID_ENV=sandbox
+# - GROQ_API_KEY
+# - PRIVATE_KEY
+# - RPC_URL_SEPOLIA
+# 
+# Frontend Public Variables:
+# - NEXT_PUBLIC_WORLD_ID_APP_ID=app_7141eab28d3662245856d528b69d89e4
+# - NEXT_PUBLIC_TENDERLY_RPC=https://virtual.sepolia.eu.rpc.tenderly.co/7611135a-8515-41d7-8146-9390be57f949
+# 
+# Optional (for Tenderly integration):
+# - TENDERLY_PROJECT
+# - TENDERLY_USERNAME
+# - TENDERLY_ACCESS_KEY

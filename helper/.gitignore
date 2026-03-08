@@ -1,0 +1,17 @@
+node_modules
+
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+PrivaCRE/.env
+cre-workflow/secrets.json
+
+# Build artifacts (may contain embedded secrets)
+.next/
+dist/
+build/
+
+# Documentation files that may contain secrets
+PLAID_RPC_FIXES_SUMMARY.md
+RPC_AND_PLAID_FIX.md

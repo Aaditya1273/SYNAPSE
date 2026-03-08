@@ -3879,6 +3879,9 @@ var hexToBytes = (hexStr) => {
   }
   return bytes;
 };
+var bytesToHex = (bytes) => {
+  return `0x${Array.from(bytes).map((b) => b.toString(16).padStart(2, "0")).join("")}`;
+};
 var hexToBase64 = (hex) => {
   const cleanHex = hex.startsWith("0x") ? hex.slice(2) : hex;
   if (cleanHex.length === 0) {
@@ -5664,11 +5667,6 @@ var LATEST_BLOCK_NUMBER = {
   absVal: Buffer.from([2]).toString("base64"),
   sign: "-1"
 };
-var encodeCallMsg = (payload) => ({
-  from: hexToBase64(payload.from),
-  to: hexToBase64(payload.to),
-  data: hexToBase64(payload.data)
-});
 var decodeJson = (input) => {
   const decoder = new TextDecoder("utf-8");
   const textBody = decoder.decode(input);
@@ -14263,37 +14261,6 @@ var sendErrorResponse = (error) => {
   }
   hostBindings.sendResponse(payload);
 };
-async function onSentimentCron(runtime2, _payload) {
-  runtime2.log("Invoking Aegis AI Engine for REAL-TIME market sentiment analysis...");
-  const httpClient = new ClientCapability3;
-  const fetchSentiment = (requester, _config) => {
-    const response = requester.sendRequest({
-      method: "GET",
-      url: "https://cryptopanic.com/api/v1/posts/?auth_token=PUBLIC&kind=news"
-    }).result();
-    const data = json(response);
-    const results = data.results || [];
-    const score = Math.min(results.length * 5, 100);
-    return {
-      sentimentScore: score,
-      reason: results.length > 10 ? "High market news volume detected." : "Moderate news frequency."
-    };
-  };
-  const aggregated = await httpClient.sendRequest(runtime2, fetchSentiment, ConsensusAggregationByFields({
-    sentimentScore: () => median(),
-    reason: () => identical()
-  }))(runtime2.config).result();
-  runtime2.log(`Aegis AI Assessment: Sentiment Score=${aggregated.sentimentScore}, Reason=${aggregated.reason}`);
-  if (aggregated.sentimentScore >= (runtime2.config.aiSentimentThreshold || 80)) {
-    runtime2.log(`Negative AI Sentiment detected! Triggering on-chain risk response...`);
-    return JSON.stringify({
-      status: "AI_TRIGGERED",
-      sentimentScore: aggregated.sentimentScore,
-      reason: aggregated.reason
-    });
-  }
-  return JSON.stringify({ status: "AI_OK", sentimentScore: aggregated.sentimentScore });
-}
 function execTyped(regex, string) {
   const match = regex.exec(string);
   return match?.groups;
@@ -15379,7 +15346,7 @@ function toHex(value2, opts = {}) {
   }
   if (typeof value2 === "boolean")
     return boolToHex(value2, opts);
-  return bytesToHex(value2, opts);
+  return bytesToHex2(value2, opts);
 }
 function boolToHex(value2, opts = {}) {
   const hex = `0x${Number(value2)}`;
@@ -15389,7 +15356,7 @@ function boolToHex(value2, opts = {}) {
   }
   return hex;
 }
-function bytesToHex(value2, opts = {}) {
+function bytesToHex2(value2, opts = {}) {
   let string = "";
   for (let i2 = 0;i2 < value2.length; i2++) {
     string += hexes[value2[i2]];
@@ -15432,7 +15399,7 @@ function numberToHex(value_, opts = {}) {
 var encoder = /* @__PURE__ */ new TextEncoder;
 function stringToHex(value_, opts = {}) {
   const value2 = encoder.encode(value_);
-  return bytesToHex(value2, opts);
+  return bytesToHex2(value2, opts);
 }
 var encoder2 = /* @__PURE__ */ new TextEncoder;
 function toBytes(value2, opts = {}) {
@@ -16076,7 +16043,7 @@ function sliceHex(value_, start, end, { strict } = {}) {
 function bytesToBigInt(bytes, opts = {}) {
   if (typeof opts.size !== "undefined")
     assertSize2(bytes, { size: opts.size });
-  const hex = bytesToHex(bytes, opts);
+  const hex = bytesToHex2(bytes, opts);
   return hexToBigInt(hex, opts);
 }
 function bytesToBool(bytes_, opts = {}) {
@@ -16092,7 +16059,7 @@ function bytesToBool(bytes_, opts = {}) {
 function bytesToNumber(bytes, opts = {}) {
   if (typeof opts.size !== "undefined")
     assertSize2(bytes, { size: opts.size });
-  const hex = bytesToHex(bytes, opts);
+  const hex = bytesToHex2(bytes, opts);
   return hexToNumber(hex, opts);
 }
 function bytesToString(bytes_, opts = {}) {
@@ -16341,7 +16308,7 @@ function decodeAbiParameters(params, data) {
     throw new AbiDecodingZeroDataError;
   if (size(data) && size(data) < 32)
     throw new AbiDecodingDataSizeTooSmallError({
-      data: typeof data === "string" ? data : bytesToHex(data),
+      data: typeof data === "string" ? data : bytesToHex2(data),
       params,
       size: size(data)
     });
@@ -16384,7 +16351,7 @@ var sizeOfLength = 32;
 var sizeOfOffset = 32;
 function decodeAddress(cursor) {
   const value2 = cursor.readBytes(32);
-  return [checksumAddress(bytesToHex(sliceBytes(value2, -20))), 32];
+  return [checksumAddress(bytesToHex2(sliceBytes(value2, -20))), 32];
 }
 function decodeArray(cursor, param, { length, staticPosition }) {
   if (!length) {
@@ -16447,9 +16414,9 @@ function decodeBytes(cursor, param, { staticPosition }) {
     }
     const data = cursor.readBytes(length);
     cursor.setPosition(staticPosition + 32);
-    return [bytesToHex(data), 32];
+    return [bytesToHex2(data), 32];
   }
-  const value2 = bytesToHex(cursor.readBytes(Number.parseInt(size2), 32));
+  const value2 = bytesToHex2(cursor.readBytes(Number.parseInt(size2), 32));
   return [value2, 32];
 }
 function decodeNumber(cursor, param) {
@@ -16741,115 +16708,6 @@ function encodeFunctionData(parameters) {
   const data = "inputs" in abiItem && abiItem.inputs ? encodeAbiParameters(abiItem.inputs, args ?? []) : undefined;
   return concatHex([signature, data ?? "0x"]);
 }
-async function fetchMarketData(runtime2) {
-  const httpClient = new ClientCapability3;
-  const fetchFn = (requester, _config) => {
-    const response = requester.sendRequest({
-      method: "GET",
-      url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&include_24hr_change=true"
-    }).result();
-    const data = json(response);
-    const btcChange = data.bitcoin?.usd_24h_change ?? 0;
-    const riskScore = Math.min(Math.max(Math.floor(Math.abs(Math.min(0, btcChange)) * 10), 5), 95);
-    return { riskScore, btcChange };
-  };
-  const aggregated = await httpClient.sendRequest(runtime2, fetchFn, ConsensusAggregationByFields({
-    riskScore: () => median(),
-    btcChange: () => median()
-  }))(runtime2.config).result();
-  return aggregated;
-}
-async function onDemoCron(runtime2, _payload) {
-  runtime2.log("--- [AetherSentinel] Initiating REAL-TIME Predictive Contagion Scan ---");
-  const { riskScore: contagionRisk, btcChange } = await fetchMarketData(runtime2);
-  runtime2.log(`[Predict] BTC 24h Change: ${btcChange.toFixed(2)}%. Calculated Contagion Risk: ${contagionRisk}/100.`);
-  runtime2.log("[Isolate] Invoking Multi-AI Consensus via Confidential Compute Simulation...");
-  const aiNodes = [
-    { model: "Gemini Pro", sentiment: btcChange < -2 ? "Strongly Bearish" : "Neutral", score: contagionRisk + 5 },
-    { model: "Claude 3.5", sentiment: btcChange < -1 ? "Bearish" : "Optimistic", score: contagionRisk },
-    { model: "Grok-1", sentiment: btcChange < -3 ? "Panic Spike" : "Steady", score: contagionRisk + 10 }
-  ];
-  const consensusScore = Math.floor(aiNodes.reduce((acc, node) => acc + node.score, 0) / aiNodes.length);
-  runtime2.log(`[Isolate] Consensus Score: ${consensusScore} (Trigger Threshold: ${runtime2.config.aiSentimentThreshold || 80})`);
-  if (consensusScore >= (runtime2.config.aiSentimentThreshold || 80)) {
-    runtime2.log("[Isolate] CRITICAL EVENT DETECTED. Executing Defensive Isolation via EVM Capability...");
-    const chainSelector = ClientCapability.SUPPORTED_CHAIN_SELECTORS["ethereum-testnet-sepolia"];
-    const evmClient = new ClientCapability(chainSelector);
-    const abi = parseAbi(["function updateRiskState(uint8 level, uint256 score, string reason)"]);
-    const callData = encodeFunctionData({
-      abi,
-      functionName: "updateRiskState",
-      args: [3, BigInt(consensusScore), `Contagion Alert: BTC drop ${btcChange}%`]
-    });
-    const reportResponse = await evmClient.writeReport(runtime2, {
-      receiver: toHex(runtime2.config.omniSentryCoreAddress),
-      $report: true
-    }).result();
-    runtime2.log(`[Act] Isolation Report Dispatched to Registry. Pulse ID: ${toHex(reportResponse.data || new Uint8Array)}`);
-    runtime2.log("[Compliance] Generating Zero-Knowledge Proof for Institutional Registry...");
-    const zkProofId = "0xzkp_" + Math.random().toString(16).slice(2);
-    runtime2.log(`[Compliance] ZK-Proof SYNCED: ${zkProofId}. Adherence to Risk Policy 4.2 Verified.`);
-    return JSON.stringify({
-      status: "AETHER_SENTINEL_PROTECTED",
-      marketData: { btcChange },
-      consensusScore,
-      zkProof: zkProofId,
-      action: "REAL_TIME_ORCHESTRATION_SUCCESS"
-    });
-  }
-  return JSON.stringify({
-    status: "AETHER_SENTINEL_SECURE",
-    marketData: { btcChange },
-    riskScore: consensusScore
-  });
-}
-async function onCCIPMigrationCron(runtime2, _payload) {
-  runtime2.log("[CCIP] Checking on-chain risk status for migration pulse...");
-  const chainSelector = ClientCapability.SUPPORTED_CHAIN_SELECTORS["ethereum-testnet-sepolia"];
-  const evmClient = new ClientCapability(chainSelector);
-  const abi = parseAbi(["function riskScore() view returns (uint256)"]);
-  const response = await evmClient.callContract(runtime2, {
-    call: encodeCallMsg({
-      from: "0x0000000000000000000000000000000000000000",
-      to: runtime2.config.omniSentryCoreAddress,
-      data: toHex(new Uint8Array)
-    })
-  }).result();
-  const callData = toHex(new Uint8Array);
-  const [currentRiskScore] = decodeFunctionResult({
-    abi,
-    functionName: "riskScore",
-    data: toHex(response.data)
-  });
-  runtime2.log(`[CCIP] Current On-Chain Risk Score: ${currentRiskScore}`);
-  const isCritical = currentRiskScore > BigInt(runtime2.config.riskThreshold || 70);
-  if (isCritical) {
-    runtime2.log("[CCIP] CRITICAL RISK DETECTED. Initiating autonomous asset migration...");
-    return JSON.stringify({ status: "CCIP_MIGRATION_STARTED", riskScore: currentRiskScore.toString() });
-  }
-  return JSON.stringify({ status: "CCIP_SAFE", riskScore: currentRiskScore.toString() });
-}
-async function onNAVUpdateCron(runtime2, _payload) {
-  runtime2.log("[NAV] Fetching Real-Time Net Asset Value from Treasury...");
-  const chainSelector = ClientCapability.SUPPORTED_CHAIN_SELECTORS["ethereum-testnet-sepolia"];
-  const evmClient = new ClientCapability(chainSelector);
-  const abi = parseAbi(["function totalSupply() view returns (uint256)"]);
-  const response = await evmClient.callContract(runtime2, {
-    call: encodeCallMsg({
-      from: "0x0000000000000000000000000000000000000000",
-      to: runtime2.config.tokenizedTreasuryAddress,
-      data: toHex(new Uint8Array)
-    })
-  }).result();
-  const [count] = decodeFunctionResult({
-    abi,
-    functionName: "totalSupply",
-    data: toHex(response.data)
-  });
-  const nav = Number(count) / 1000000000000000000;
-  runtime2.log(`[NAV] Real-Time NAV Calculation: ${nav}`);
-  return JSON.stringify({ status: "NAV_UPDATED", nav });
-}
 var configSchema = exports_external.object({
   scheduleRisk: exports_external.string(),
   scheduleSentiment: exports_external.string(),
@@ -16865,7 +16723,7 @@ var configSchema = exports_external.object({
 async function getTradFiRiskData(runtime2) {
   runtime2.log(`[Risk] Initiating Multi-Source Institutional Risk Scan...`);
   const httpClient = new ClientCapability3;
-  const fetchRisk = (requester, config) => {
+  const fetchRisk = (requester, _config) => {
     const response = requester.sendRequest({
       method: "GET",
       url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&include_24hr_change=true"
@@ -16878,51 +16736,156 @@ async function getTradFiRiskData(runtime2) {
       bankRunProbability: change < -3 ? 0.65 : 0.15
     };
   };
-  const aggregated = await httpClient.sendRequest(runtime2, fetchRisk, ConsensusAggregationByFields({
+  return await httpClient.sendRequest(runtime2, fetchRisk, ConsensusAggregationByFields({
     bankReserveRatio: () => median(),
     marketSentiment: () => identical(),
     bankRunProbability: () => median()
   }))(runtime2.config).result();
-  return aggregated;
-}
-function calculateRiskScore(data) {
-  let score = 0;
-  if (data.bankReserveRatio < 0.07)
-    score += 40;
-  if (data.marketSentiment === "Negative")
-    score += 30;
-  if (data.bankRunProbability > 0.5)
-    score += 30;
-  return {
-    level: score > 70 ? 3 : score > 40 ? 2 : 1,
-    score,
-    reason: score > 70 ? "CRITICAL: Multiple factors indicate bank failure risk." : "Stable conditions."
-  };
 }
 async function onRiskAssessmentCron(runtime2, _payload) {
   runtime2.log("Starting autonomous risk assessment cycle...");
   const riskData = await getTradFiRiskData(runtime2);
-  const assessment = calculateRiskScore(riskData);
-  runtime2.log(`Risk Assessment Level: ${assessment.level} (${assessment.score}/100)`);
-  runtime2.log(`Reason: ${assessment.reason}`);
-  return JSON.stringify({
-    status: "COMPLETED",
-    score: assessment.score,
-    level: assessment.level,
-    details: assessment.reason
+  const score = (riskData.bankReserveRatio < 0.07 ? 40 : 0) + (riskData.marketSentiment === "Negative" ? 30 : 0) + (riskData.bankRunProbability > 0.5 ? 30 : 0);
+  runtime2.log(`Risk Assessment: ${score}/100. ${score > 70 ? "CRITICAL" : "Stable"}`);
+  return JSON.stringify({ status: "COMPLETED", score });
+}
+async function onSentimentCron(runtime2, _payload) {
+  runtime2.log("Invoking Aegis AI Engine for REAL-TIME market sentiment analysis...");
+  const httpClient = new ClientCapability3;
+  const fetchSentiment = (requester, _config) => {
+    const response = requester.sendRequest({
+      method: "GET",
+      url: "https://cryptopanic.com/api/v1/posts/?auth_token=PUBLIC&kind=news"
+    }).result();
+    const data = json(response);
+    const results = data.results || [];
+    const score = Math.min(results.length * 5, 100);
+    return {
+      sentimentScore: score,
+      reason: results.length > 10 ? "High market news volume detected." : "Moderate news frequency."
+    };
+  };
+  const aggregated = await httpClient.sendRequest(runtime2, fetchSentiment, ConsensusAggregationByFields({
+    sentimentScore: () => median(),
+    reason: () => identical()
+  }))(runtime2.config).result();
+  runtime2.log(`Aegis AI Assessment: Score=${aggregated.sentimentScore}`);
+  return JSON.stringify({ status: "AI_OK", sentimentScore: aggregated.sentimentScore });
+}
+async function onCCIPMigrationCron(runtime2, _payload) {
+  runtime2.log("[CCIP] Checking on-chain risk status for migration pulse...");
+  const chainSelector = ClientCapability.SUPPORTED_CHAIN_SELECTORS["ethereum-testnet-sepolia"];
+  const evmClient = new ClientCapability(chainSelector);
+  const abi = parseAbi(["function riskScore() view returns (uint256)"]);
+  const callData = encodeFunctionData({
+    abi,
+    functionName: "riskScore",
+    args: []
   });
+  const response = await evmClient.callContract(runtime2, {
+    call: {
+      from: "0x0000000000000000000000000000000000000000",
+      to: runtime2.config.omniSentryCoreAddress,
+      data: callData
+    }
+  }).result();
+  const currentRiskScore = decodeFunctionResult({
+    abi,
+    functionName: "riskScore",
+    data: toHex(response.data)
+  });
+  runtime2.log(`[CCIP] Current On-Chain Risk Score: ${currentRiskScore}`);
+  return JSON.stringify({ status: "CCIP_SAFE", riskScore: currentRiskScore.toString() });
 }
-async function initWorkflow(runtime2, _secrets) {
-  runtime2.log("SYNAPSE | AetherSentinel initializing in institutional stealth mode...");
-  cre.registerCronHandler("risk-assessment", onRiskAssessmentCron);
-  cre.registerCronHandler("ai-sentiment", onSentimentCron);
-  cre.registerCronHandler("demo-pulse", onDemoCron);
-  cre.registerCronHandler("ccip-migration", onCCIPMigrationCron);
-  cre.registerCronHandler("nav-update", onNAVUpdateCron);
+async function onNAVUpdateCron(runtime2, _payload) {
+  runtime2.log("[NAV] Fetching Real-Time Net Asset Value from Treasury...");
+  const chainSelector = ClientCapability.SUPPORTED_CHAIN_SELECTORS["ethereum-testnet-sepolia"];
+  const evmClient = new ClientCapability(chainSelector);
+  const abi = parseAbi(["function totalSupply() view returns (uint256)"]);
+  const callData = encodeFunctionData({
+    abi,
+    functionName: "totalSupply",
+    args: []
+  });
+  const response = await evmClient.callContract(runtime2, {
+    call: {
+      from: "0x0000000000000000000000000000000000000000",
+      to: runtime2.config.tokenizedTreasuryAddress,
+      data: callData
+    }
+  }).result();
+  const count = decodeFunctionResult({
+    abi,
+    functionName: "totalSupply",
+    data: toHex(response.data)
+  });
+  const nav = Number(count) / 1000000000000000000;
+  runtime2.log(`[NAV] Real-Time NAV Calculation: ${nav}`);
+  return JSON.stringify({ status: "NAV_UPDATED", nav });
 }
-var runner = Runner.newRunner();
-runner.run(initWorkflow);
+async function onDemoCron(runtime2, _payload) {
+  runtime2.log("--- [AetherSentinel] Initiating REAL-TIME Predictive Contagion Scan ---");
+  const httpClient = new ClientCapability3;
+  const fetchFn = (requester, _config) => {
+    const response = requester.sendRequest({
+      method: "GET",
+      url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&include_24hr_change=true"
+    }).result();
+    const data = json(response);
+    const btcChange2 = data.bitcoin?.usd_24h_change ?? 0;
+    const riskScore2 = Math.min(Math.max(Math.floor(Math.abs(Math.min(0, btcChange2)) * 10), 5), 95);
+    return { riskScore: riskScore2, btcChange: btcChange2 };
+  };
+  const { riskScore, btcChange } = await httpClient.sendRequest(runtime2, fetchFn, ConsensusAggregationByFields({
+    riskScore: () => median(),
+    btcChange: () => median()
+  }))(runtime2.config).result();
+  runtime2.log(`[Predict] BTC Change: ${btcChange}%, Risk: ${riskScore}/100`);
+  if (riskScore >= (runtime2.config.aiSentimentThreshold || 80)) {
+    runtime2.log("[Isolate] CRITICAL EVENT DETECTED. Executing Defensive Isolation via EVM Capability...");
+    const chainSelector = ClientCapability.SUPPORTED_CHAIN_SELECTORS["ethereum-testnet-sepolia"];
+    const evmClient = new ClientCapability(chainSelector);
+    const abi = parseAbi(["function updateRiskState(uint8 level, uint256 score, string reason)"]);
+    const callData = encodeFunctionData({
+      abi,
+      functionName: "updateRiskState",
+      args: [3, BigInt(riskScore), `Contagion Alert: BTC drop ${btcChange}%`]
+    });
+    const reportResponse = runtime2.report({
+      encodedPayload: hexToBase64(callData),
+      encoderName: "evm",
+      signingAlgo: "ecdsa",
+      hashingAlgo: "keccak256"
+    }).result();
+    const txResp = await evmClient.writeReport(runtime2, {
+      receiver: runtime2.config.omniSentryCoreAddress,
+      report: reportResponse
+    }).result();
+    if (txResp.txStatus !== TxStatus.SUCCESS) {
+      runtime2.log(`[Act] Isolation failed: ${txResp.errorMessage || txResp.txStatus}`);
+    } else {
+      runtime2.log(`[Act] Isolation Success. TxHash: ${bytesToHex(txResp.txHash || new Uint8Array(32))}`);
+    }
+  }
+  return JSON.stringify({ status: "SENTINEL_OK", riskScore });
+}
+function initWorkflow(config) {
+  const cronTrigger = new cre.capabilities.CronCapability;
+  return [
+    cre.handler(cronTrigger.trigger({ schedule: config.scheduleRisk }), onRiskAssessmentCron),
+    cre.handler(cronTrigger.trigger({ schedule: config.scheduleSentiment }), onSentimentCron),
+    cre.handler(cronTrigger.trigger({ schedule: config.scheduleDemo }), onDemoCron),
+    cre.handler(cronTrigger.trigger({ schedule: config.scheduleCCIP }), onCCIPMigrationCron),
+    cre.handler(cronTrigger.trigger({ schedule: config.scheduleNAV }), onNAVUpdateCron)
+  ];
+}
+async function main() {
+  const runner = await Runner.newRunner({
+    configSchema
+  });
+  await runner.run(initWorkflow);
+}
 main().catch(sendErrorResponse);
 export {
-  initWorkflow
+  main
 };

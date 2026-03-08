@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Plaid Link Test</title>
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+</head>
+<body>
+    <h1>Plaid Link Test</h1>
+    <button id="linkButton" onclick="openPlaid()">Open Plaid Link</button>
+    <div id="status"></div>
+
+    <script>
+        let linkToken = null;
+        let handler = null;
+
+        // Fetch link token
+        fetch('http://localhost:3000/api/plaid/create-link-token', {
+            method: 'POST'
+        })
+        .then(res => res.json())
+        .then(data => {
+            linkToken = data.link_token;
+            document.getElementById('status').innerHTML = 'Link token received: ' + linkToken.substring(0, 30) + '...';
+            
+            // Create Plaid Link handler
+            handler = Plaid.create({
+                token: linkToken,
+                onSuccess: function(public_token, metadata) {
+                    console.log('Success!', public_token);
+                    document.getElementById('status').innerHTML = 'Success! Public token: ' + public_token.substring(0, 30) + '...';
+                },
+                onExit: function(err, metadata) {
+                    console.log('Exit', err);
+                    document.getElementById('status').innerHTML = 'Exited: ' + (err ? err.error_message : 'User closed');
+                }
+            });
+            
+            document.getElementById('linkButton').disabled = false;
+            document.getElementById('status').innerHTML += '<br>Ready to open!';
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            document.getElementById('status').innerHTML = 'Error: ' + err.message;
+        });
+
+        function openPlaid() {
+            if (handler) {
+                handler.open();
+            } else {
+                alert('Handler not ready');
+            }
+        }
+    </script>
+</body>
+</html>

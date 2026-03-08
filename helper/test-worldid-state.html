@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World ID State Debugger</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0f;
+            color: #0df26c;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #0df26c;
+            border-bottom: 2px solid #0df26c;
+            padding-bottom: 10px;
+        }
+        .section {
+            background: #1a1a2e;
+            border: 1px solid #0df26c;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .key {
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .value {
+            color: #fff;
+            margin-left: 20px;
+        }
+        button {
+            background: #0df26c;
+            color: #0a0a0f;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #22c55e;
+        }
+        button.danger {
+            background: #ef4444;
+            color: white;
+        }
+        button.danger:hover {
+            background: #dc2626;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .status.verified {
+            background: #0df26c20;
+            border: 1px solid #0df26c;
+        }
+        .status.not-verified {
+            background: #ef444420;
+            border: 1px solid #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 World ID State Debugger</h1>
+    
+    <div class="section">
+        <h2>Current LocalStorage State</h2>
+        <div id="state"></div>
+    </div>
+
+    <div class="section">
+        <h2>Verification Status</h2>
+        <div id="status"></div>
+    </div>
+
+    <div class="section">
+        <h2>Actions</h2>
+        <button onclick="refreshState()">🔄 Refresh State</button>
+        <button onclick="simulateVerification()">✅ Simulate Verification</button>
+        <button class="danger" onclick="clearVerification()">❌ Clear Verification</button>
+        <button class="danger" onclick="clearAll()">🗑️ Clear All Data</button>
+    </div>
+
+    <div class="section">
+        <h2>Quick Links</h2>
+        <button onclick="window.location.href='/dashboard'">📊 Go to Dashboard</button>
+        <button onclick="window.location.href='/auth'">🔐 Go to Auth</button>
+    </div>
+
+    <script>
+        function refreshState() {
+            const keys = [
+                'worldid_verified',
+                'privacre_verified',
+                'isVerified',
+                'world_id_nullifier',
+                'privacre_wallet',
+                'privacre_score',
+                'creditScore',
+                'privacre_tx',
+                'txHash',
+                'lastContract',
+                'redirect_after_worldid'
+            ];
+
+            let html = '<table style="width: 100%;">';
+            keys.forEach(key => {
+                const value = localStorage.getItem(key);
+                html += `
+                    <tr>
+                        <td class="key">${key}:</td>
+                        <td class="value">${value || '<em style="color: #666;">null</em>'}</td>
+                    </tr>
+                `;
+            });
+            html += '</table>';
+            document.getElementById('state').innerHTML = html;
+
+            // Update status
+            const worldIdVerified = localStorage.getItem('worldid_verified');
+            const privacreVerified = localStorage.getItem('privacre_verified');
+            const isVerified = worldIdVerified === 'true' || privacreVerified === 'true';
+
+            const statusHtml = `
+                <div class="status ${isVerified ? 'verified' : 'not-verified'}">
+                    <strong>${isVerified ? '✅ VERIFIED' : '❌ NOT VERIFIED'}</strong><br>
+                    worldid_verified: ${worldIdVerified || 'null'}<br>
+                    privacre_verified: ${privacreVerified || 'null'}
+                </div>
+            `;
+            document.getElementById('status').innerHTML = statusHtml;
+        }
+
+        function simulateVerification() {
+            localStorage.setItem('worldid_verified', 'true');
+            localStorage.setItem('privacre_verified', 'true');
+            localStorage.setItem('world_id_nullifier', 'test_nullifier_' + Date.now());
+            alert('✅ Verification simulated! Refresh the page or go to dashboard.');
+            refreshState();
+        }
+
+        function clearVerification() {
+            localStorage.removeItem('worldid_verified');
+            localStorage.removeItem('privacre_verified');
+            localStorage.removeItem('isVerified');
+            localStorage.removeItem('world_id_nullifier');
+            alert('❌ Verification cleared!');
+            refreshState();
+        }
+
+        function clearAll() {
+            if (confirm('Are you sure you want to clear ALL localStorage data?')) {
+                localStorage.clear();
+                alert('🗑️ All data cleared!');
+                refreshState();
+            }
+        }
+
+        // Initial load
+        refreshState();
+    </script>
+</body>
+</html>
