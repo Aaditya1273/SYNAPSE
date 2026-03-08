@@ -8,18 +8,22 @@ import { usePathname } from "next/navigation";
 import { ConnectButton } from "thirdweb/react";
 import { client, tenderlyChain } from "@/lib/thirdweb";
 
+import GooeyNav from "./GooeyNav";
+
 export function Navbar() {
     const { account, connect, disconnect, loading: walletLoading, terminalConnected, connectTerminal } = useWallet();
     const pathname = usePathname();
 
     const navItems = [
-        { name: 'Network', href: '/network' },
-        { name: 'Protocol', href: '/dashboard' },
-        { name: 'Vault', href: '/vault' },
+        { label: 'Network', href: '/network' },
+        { label: 'Protocol', href: '/dashboard' },
+        { label: 'Vault', href: '/vault' },
     ];
 
+    const activeIndex = navItems.findIndex(item => item.href === pathname);
+
     return (
-        <nav className="fixed top-0 w-full z-50 bg-white border-b border-gray-100 shadow-sm px-8 py-4">
+        <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm px-8 py-2">
             <div className="max-w-7xl mx-auto flex justify-between items-center">
                 <Link href="/" className="flex items-center gap-3 group cursor-pointer">
                     <div className="w-9 h-9 rounded-lg bg-[#2563EB] flex items-center justify-center font-bold shadow-md shadow-blue-500/10 group-hover:scale-105 transition-all duration-300">
@@ -31,25 +35,13 @@ export function Navbar() {
                     </div>
                 </Link>
 
-                <div className="hidden md:flex gap-8 text-[11px] font-bold uppercase tracking-widest">
-                    {account && navItems.map((item) => {
-                        const isActive = pathname === item.href;
-                        return (
-                            <Link
-                                key={item.name}
-                                href={item.href}
-                                className={`transition-all duration-200 relative py-2 ${isActive ? 'text-[#2563EB]' : 'text-gray-500 hover:text-[#0F172A]'}`}
-                            >
-                                {item.name}
-                                {isActive && (
-                                    <motion.span
-                                        layoutId="nav-underline"
-                                        className="absolute -bottom-4 left-0 w-full h-[3px] bg-[#2563EB]"
-                                    />
-                                )}
-                            </Link>
-                        );
-                    })}
+                <div className="hidden md:block">
+                    {account && (
+                        <GooeyNav
+                            items={navItems}
+                            initialActiveIndex={activeIndex >= 0 ? activeIndex : 0}
+                        />
+                    )}
                 </div>
 
                 <div className="flex items-center gap-3">

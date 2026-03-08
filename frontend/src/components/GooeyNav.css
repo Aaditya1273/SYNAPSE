@@ -1,0 +1,111 @@
+.gooey-nav-container {
+    --color-1: #2563EB;
+    --color-2: #3B82F6;
+    --color-3: #60A5FA;
+    --color-4: #93C5FD;
+
+    position: relative;
+    display: inline-block;
+    background: transparent;
+    padding: 8px;
+    border-radius: 12px;
+}
+
+.gooey-nav-container nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 16px;
+}
+
+.gooey-nav-container nav ul li {
+    position: relative;
+    z-index: 2;
+}
+
+.gooey-nav-container nav ul li a {
+    display: block;
+    padding: 8px 16px;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    transition: color 0.3s;
+}
+
+.gooey-nav-container nav ul li.active a {
+    color: #fff;
+}
+
+.gooey-nav-container .effect {
+    position: absolute;
+    pointer-events: none;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.gooey-nav-container .effect.filter {
+    filter: url('#goo');
+    background: var(--color-1);
+}
+
+.gooey-nav-container .effect.text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s, all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gooey-nav-container .effect.text.active {
+    opacity: 1;
+}
+
+.gooey-nav-container .particle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: inline-block;
+    transform: translate(-50%, -50%);
+    animation: explode var(--time) forwards;
+}
+
+.gooey-nav-container .particle .point {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: var(--color);
+    border-radius: 50%;
+    filter: blur(4px);
+}
+
+@keyframes explode {
+    0% {
+        transform: translate(-50%, -50%) translate(var(--start-x), var(--start-y)) scale(0);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) translate(var(--end-x), var(--end-y)) scale(var(--scale));
+    }
+
+    100% {
+        transform: translate(-50%, -50%) translate(var(--start-x), var(--start-y)) scale(0);
+    }
+}
+
+.gooey-svg {
+    position: absolute;
+    width: 0;
+    height: 0;
+    visibility: hidden;
+}
