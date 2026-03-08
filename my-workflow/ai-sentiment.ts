@@ -1,24 +1,28 @@
 import {
     cre,
-    consensusIdenticalAggregation,
     type Runtime,
     type CronPayload,
     HTTPClient,
     ConsensusAggregationByFields,
     median,
+    identical,
+    json,
 } from '@chainlink/cre-sdk';
 
 // ---------- Handlers ----------
 
-export async function onSentimentCron(runtime: Runtime<any>, _payload: CronPayload): Promise<string> {
+async function onSentimentCron(runtime: Runtime<any>, _payload: CronPayload): Promise<string> {
     runtime.log("Invoking Aegis AI Engine for REAL-TIME market sentiment analysis...");
 
     const httpClient = new HTTPClient();
 
-    const fetchSentiment = async (config: any) => {
-        // Fetching real-world sentiment data
-        const response = await fetch('https://cryptopanic.com/api/v1/posts/?auth_token=PUBLIC&kind=news');
-        const data = await response.json();
+    const fetchSentiment = (requester: any, _config: any) => {
+        const response = requester.sendRequest({
+            method: 'GET',
+            url: 'https://cryptopanic.com/api/v1/posts/?auth_token=PUBLIC&kind=news'
+        }).result();
+
+        const data = json(response) as any;
         const results = data.results || [];
 
         // Derive a score based on news volume and variety
@@ -33,8 +37,8 @@ export async function onSentimentCron(runtime: Runtime<any>, _payload: CronPaylo
         runtime,
         fetchSentiment,
         ConsensusAggregationByFields<{ sentimentScore: number; reason: string }>({
-            sentimentScore: median<number>(),
-            reason: (values: string[]) => values[0],
+            sentimentScore: () => median<number>(),
+            reason: () => identical<string>(),
         })
     )(runtime.config).result();
 
