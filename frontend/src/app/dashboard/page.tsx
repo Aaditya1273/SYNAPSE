@@ -7,8 +7,8 @@ import { useAetherState, useWallet, useAetherActions, useAuditLogs } from "@/lib
 
 export default function Dashboard() {
     const { isPaused, riskState, loading } = useAetherState();
-    const { account, client } = useWallet();
-    const { manualOverride, pending: actionPending } = useAetherActions(client, account);
+    const { account } = useWallet();
+    const { manualOverride, pending } = useAetherActions(null, account);
     const { logs: firewallLogs } = useAuditLogs();
     const [overrideNote, setOverrideNote] = useState("");
 
@@ -198,10 +198,10 @@ export default function Dashboard() {
                         />
                         <button
                             onClick={() => manualOverride(2, 85, overrideNote || "Manual Intervention")}
-                            disabled={!account || actionPending || !overrideNote}
+                            disabled={!account || pending || !overrideNote}
                             className="w-full py-4 rounded-xl bg-red-600 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-red-700 transition-all disabled:opacity-30 disabled:grayscale shadow-lg shadow-red-500/10"
                         >
-                            {actionPending ? <Loader2 className="animate-spin" size={16} /> : "Trigger Isolation"}
+                            {pending ? <Loader2 className="animate-spin" size={16} /> : "Trigger Isolation"}
                         </button>
                     </div>
                 </div>

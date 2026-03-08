@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, Fira_Code } from "next/font/google";
+import "./globals.css";
+import { Navbar } from "@/components/Navbar";
 import { AuthGuard } from "@/components/AuthGuard";
 import { ThirdwebProvider } from "thirdweb/react";
 

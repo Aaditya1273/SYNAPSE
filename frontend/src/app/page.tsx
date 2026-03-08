@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { Shield, RefreshCw, ArrowRight, Globe, Cpu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAetherState, useWallet } from "@/lib/hooks";
+import { ConnectButton } from "thirdweb/react";
+import { client, tenderlyChain } from "@/lib/thirdweb";
 
 export default function Home() {
   const { isPaused, riskState } = useAetherState();
@@ -58,15 +60,19 @@ export default function Home() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="flex flex-col sm:flex-row justify-center gap-6 pt-12"
+          className="flex flex-col sm:flex-row justify-center items-center gap-6 pt-12"
         >
-          <button
-            onClick={connect}
-            disabled={walletLoading}
-            className="px-10 py-5 rounded-xl bg-[#2563EB] text-white font-black uppercase tracking-[0.2em] text-[11px] flex items-center gap-3 hover:translate-y-[-4px] transition-all shadow-xl shadow-blue-500/20 active:scale-95"
-          >
-            {walletLoading ? "Initializing..." : "Connect Tactical Wallet"} <ArrowRight size={18} />
-          </button>
+          <div className="institutional-connect-hero">
+            <ConnectButton
+              client={client}
+              theme="light"
+              chain={tenderlyChain}
+              connectButton={{
+                className: "institutional-btn-hero",
+                label: "Connect Tactical Wallet"
+              }}
+            />
+          </div>
           <button className="px-10 py-5 rounded-xl border border-gray-100 bg-white text-[#0F172A] font-black uppercase tracking-[0.2em] text-[11px] hover:bg-gray-50 transition-all border-b-4 border-b-gray-200 active:border-b-0 active:translate-y-[2px]">
             System Documentation
           </button>

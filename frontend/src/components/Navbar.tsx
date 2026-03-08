@@ -5,6 +5,8 @@ import { useWallet } from "@/lib/hooks";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ConnectButton } from "thirdweb/react";
+import { client, tenderlyChain } from "@/lib/thirdweb";
 
 export function Navbar() {
     const { account, connect, disconnect, loading: walletLoading, terminalConnected, connectTerminal } = useWallet();
@@ -71,22 +73,20 @@ export function Navbar() {
                     </button>
 
                     {/* wallet Connect - Integrated with ThirdWeb context */}
-                    <button
-                        onClick={account ? disconnect : connect}
-                        disabled={walletLoading}
-                        className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${account
-                            ? 'bg-blue-50 border border-blue-100 text-[#2563EB]'
-                            : 'bg-[#2563EB] text-white shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95'
-                            }`}
-                    >
-                        {walletLoading ? (
-                            <Loader2 className="animate-spin w-4 h-4 mx-auto" />
-                        ) : account ? (
-                            `${account.slice(0, 6)}...${account.slice(-4)}`
-                        ) : (
-                            "Connect Wallet"
-                        )}
-                    </button>
+                    <div className="institutional-connect">
+                        <ConnectButton
+                            client={client}
+                            theme="light"
+                            chain={tenderlyChain}
+                            connectButton={{
+                                className: " institutional-btn-connect",
+                                label: "Connect Wallet"
+                            }}
+                            detailsButton={{
+                                className: "institutional-btn-details"
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
         </nav>

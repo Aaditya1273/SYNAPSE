@@ -128,3 +128,45 @@ body {
 .bg-institutional-blue {
   background-color: hsl(var(--primary));
 }
+
+/* ThirdWeb Institutional Overrides */
+.institutional-connect-hero button {
+  padding: 1.25rem 2.5rem !important;
+  border-radius: 0.75rem !important;
+  background: #2563EB !important;
+  color: white !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.2em !important;
+  font-size: 11px !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2) !important;
+}
+
+.institutional-connect-hero button:hover {
+  transform: translateY(-4px) !important;
+}
+
+.institutional-btn-connect {
+  background: #2563EB !important;
+  color: white !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  font-size: 10px !important;
+  padding: 0.625rem 1.25rem !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.institutional-btn-details {
+  background: #EFF6FF !important;
+  border: 1px solid #DBEAFE !important;
+  color: #2563EB !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  font-size: 10px !important;
+  padding: 0.625rem 1.25rem !important;
+  border-radius: 0.5rem !important;
+}
