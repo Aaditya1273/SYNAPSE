@@ -18,19 +18,26 @@
 
 ---
 
-## 📌 The Threat & Our Vision
+## 🌎 1. Introduction
 
-**The Problem:** DeFi moves in milliseconds, but our security reacts in minutes. By the time a traditional oracle detects an exploit, flash loan attack, or sudden market contagion, the liquidity is already gone. Smart contracts are blind to off-chain intelligence like social sentiment, cross-chain volatility, and looming market fear. 
-
-**The Solution:** AetherSentinel is the first **decentralized predictive contagion firewall** for tokenized assets. It doesn't just react to crises—it predicts, isolates, and neutralizes systemic contagion across RWAs, stablecoins, and institutional treasuries *before* it spreads.
-
-Using **Chainlink Compute Runtime Environment (CRE)** as our central nervous system, AetherSentinel transforms passive smart contracts into proactive, self-protecting financial fortresses.
+As Institutional capital floods onto the blockchain, the scale of risk evolves. We are no longer just dealing with smart contract bugs; we are dealing with **systemic, cross-chain financial contagion**. AetherSentinel is an institutional-grade decentralized orchestration platform. It transforms passive smart contracts into proactive, self-protecting financial fortresses using the unprecedented computational power of the **Chainlink Compute Runtime Environment (CRE)**.
 
 ---
 
-## 🏗️ Core Architecture: Predict. Isolate. Heal.
+## ⚠️ 2. The Problem: DeFi is Reactive
 
-AetherSentinel executes a highly sophisticated, three-stage autonomous pipeline powered by decentralized off-chain computation. 
+Currently, DeFi security operates in the past tense. 
+By the time a traditional oracle detects an exploit, a flash loan attack, or a sudden market plunge, **the liquidity is already gone**. 
+
+Smart contracts are fundamentally blind to off-chain intelligence. They cannot read social sentiment, they cannot monitor cross-chain volatility spillover, and they cannot predict fear. They wait to be exploited, and then they react.
+
+We do not need faster reactive measures. We need **predictive consensus**.
+
+---
+
+## 💡 3. The Solution: Predict, Isolate, Heal
+
+AetherSentinel is the first **decentralized predictive contagion firewall** for tokenized assets. It executes a highly sophisticated, three-stage autonomous pipeline powered by decentralized off-chain computation.
 
 ```mermaid
 graph TD
@@ -66,42 +73,43 @@ graph TD
         UNPAUSE --> CCIP[Chainlink CCIP Routing]
         CCIP --> SAFE[Migrate Funds to Cold Vault]:::success
     end
-
 ```
 
 ---
 
-## 🚀 Key Innovation Pillars
+## 🌟 4. Uniqueness: Why This Wins
 
-### 1. 🌐 Predictive Contagion Mapping
-AetherSentinel analyzes cross-asset volatility spillover. If a property token in Asia shows volatility, the CRE workflow predicts the risk impact on US-backed treasuries, initiating preventative shifts before the correlation reaches critical levels.
+AetherSentinel introduces four distinct structural advantages that separate it from basic AI agents or reactive security tools:
 
-### 2. 🧠 Confidential Multi-AI Consensus
-We don't rely on a single point of failure. AetherSentinel runs three independent LLMs (Gemini, Claude, Grok) in parallel using the Chainlink Confidential Compute infrastructure. Only the heavily encrypted consensus result is exposed, protecting institutional privacy entirely.
+### 🌐 Predictive Contagion Mapping
+AI doesn't just detect one localized risk. It maps how risk in one asset (e.g., a Hong Kong property token) will recursively spread to others (USDC, European bonds) via volatility spillover analysis. 
 
-### 3. 🛡️ Unbreakable Institutional Isolation Protocol
-When consensus breaches the danger threshold (Score > 85), the `OmniSentryCore` smart contract enters `ISOLATION_ACTIVE` mode. In this mode, the blockchain natively rejects all manual override attempts—requiring multi-sig cryptographic justification to touch the funds, providing mathematical proof of security.
+### 🧠 Confidential Multi-AI Consensus
+We do not rely on a single point of failure or an exposed prompt. AetherSentinel runs three independent LLMs (Gemini, Claude, Grok) in parallel using Chainlink Confidential Compute. **Only the final, encrypted consensus result is exposed**, protecting institutional privacy completely.
 
-### 4. 🔏 Zero-Knowledge (ZK) Compliance Vault
-AetherSentinel automatically generates ZK proofs for institutional registries, proving that the circuit breaker followed all regulatory compliance rules *without* revealing sensitive, proprietary trading positions to the public. 
+### 🛡️ Unbreakable Institutional Isolation Protocol
+When consensus breaches the danger threshold (Score > 85), the `OmniSentryCore` smart contract enters `ISOLATION_ACTIVE` mode. In this state, the blockchain natively rejects all manual override attempts—requiring cryptographically verifiable multi-sig justification to touch the funds. 
+
+### 🔏 Zero-Knowledge (ZK) Compliance Vault
+After every action, AetherSentinel automatically generates ZK proofs for institutional registries, proving mathematically that the circuit breaker followed regulatory compliance rules *without* revealing sensitive, proprietary trading positions to the public. 
 
 ---
 
-## ⚙️ Technical Deep Dive Workflow
+## 📊 5. Market Data Integration Flow
 
-This diagram explains the exact payload routing between the user, the Chainlink DON, and the blockchain interface.
+This sequence diagram illustrates exactly how live market telemetry routes through our decentralized network to the blockchain, securely and autonomously.
 
 ```mermaid
 sequenceDiagram
-    participant UI as Dashboard DApp
+    participant UI as Aether Sentinel DApp
     participant CRE as Chainlink CRE Node
     participant AI as Multi-Agent Core
     participant SC as OmniSentryContract
     
-    UI->>CRE: Fetch Network Telemetry
-    CRE->>AI: Trigger Sentiment & Volatility Analysis
-    AI-->>CRE: Return Aggregated Risk Data
-    CRE-->>UI: Serve Global Threat Score
+    UI->>CRE: Route Global Market Telemetry
+    CRE->>AI: Trigger Proprietary Volatility & Sentiment Algorithms
+    AI-->>CRE: Aggregate Multi-Node Risk Consensus
+    CRE-->>UI: Serve Global Threat Score to Dashboard
     
     alt Threat Score > 85
         CRE->>SC: Push Payload: enforcePause()
@@ -110,8 +118,8 @@ sequenceDiagram
         SC--xUI: Revert: EnforcedPause
         Note over UI,SC: Cryptographic Lock Engaged.<br/>Manual overrides disabled.
     else Threat Score < 85
-        CRE->>SC: Update heartbeat
-        SC-->>UI: Protocol Status: NOMINAL
+        CRE->>SC: Update On-Chain heartbeat
+        SC-->>UI: Protocol Status: STABLE / NOMINAL
     end
 ```
 
@@ -141,7 +149,6 @@ Ensure you are running on port `3000`.
 ```bash
 npm run dev
 ```
-*Visit `http://localhost:3000` to view the unified terminal dashboard.*
 
 ### 3. Run the CRE Workflow Simulation
 We have eliminated mocked telemetry. Test the live Predict-Isolate-Heal loop:
@@ -153,7 +160,7 @@ cre workflow simulate my-workflow --env .env.local -T tenderly-testnet
 
 ---
 
-## 📜 Hackathon Verification Links
+## 📜 Official Hackathon Verification Links
 
 *These are the official deployed contracts and proofs mapping to our Chainlink Hackathon submission.*
 
