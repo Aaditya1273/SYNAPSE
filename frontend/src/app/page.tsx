@@ -24,17 +24,19 @@ export default function Home() {
       {/* Hero Section - Clean & High Contrast */}
       <section className="text-center space-y-12 py-32 relative">
         <div className="space-y-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-blue-50 border border-blue-100 text-[10px] font-black uppercase tracking-[0.2em] text-[#2563EB]"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-            </span>
-            Institutional Node v2.4.0 Active
-          </motion.div>
+          {account && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-blue-50 border border-blue-100 text-[10px] font-black uppercase tracking-[0.2em] text-[#2563EB]"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+              </span>
+              Institutional Node v2.4.0 Active
+            </motion.div>
+          )}
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -106,33 +108,35 @@ export default function Home() {
         ))}
       </section>
 
-      {/* Network Status Grid - Minimal Institutional */}
-      <section className="py-32 px-16 border border-gray-100 rounded-[3rem] relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-12">
-        <div className="max-w-2xl space-y-10 relative z-10">
-          <h2 className="text-5xl font-black tracking-tight text-[#0F172A] uppercase leading-[0.9]">
-            Engineered for <br /><span className="text-[#2563EB]">Protocol Sovereignty.</span>
-          </h2>
-          <p className="text-gray-400 font-bold leading-relaxed uppercase text-xs tracking-widest max-w-lg">
-            AetherSentinel is the bridge between deep risk intelligence and automated protocol defense. We eliminate systemic domino effects before contagion spreads.
-          </p>
-          <div className="flex gap-12 pt-6">
-            <div className="space-y-3">
-              <div className="text-5xl font-black text-[#0F172A] tracking-tighter uppercase leading-none">{isPaused ? "Isolated" : "Active"}</div>
-              <div className="text-[10px] font-black text-[#2563EB] uppercase tracking-[0.2em] opacity-40">System Status</div>
-            </div>
-            <div className="space-y-3">
-              <div className="text-5xl font-black text-[#0F172A] tracking-tighter leading-none">{riskState?.score ?? "12"} / 100</div>
-              <div className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] opacity-40">Global Exposure</div>
+      {/* Network Status Grid - Only visible if wallet is connected */}
+      {account && (
+        <section className="py-32 px-16 border border-gray-100 rounded-[3rem] relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-12">
+          <div className="max-w-2xl space-y-10 relative z-10">
+            <h2 className="text-5xl font-black tracking-tight text-[#0F172A] uppercase leading-[0.9]">
+              Engineered for <br /><span className="text-[#2563EB]">Protocol Sovereignty.</span>
+            </h2>
+            <p className="text-gray-400 font-bold leading-relaxed uppercase text-xs tracking-widest max-w-lg">
+              AetherSentinel is the bridge between deep risk intelligence and automated protocol defense. We eliminate systemic domino effects before contagion spreads.
+            </p>
+            <div className="flex gap-12 pt-6">
+              <div className="space-y-3">
+                <div className="text-5xl font-black text-[#0F172A] tracking-tighter uppercase leading-none">{isPaused ? "Isolated" : "Active"}</div>
+                <div className="text-[10px] font-black text-[#2563EB] uppercase tracking-[0.2em] opacity-40">System Status</div>
+              </div>
+              <div className="space-y-3">
+                <div className="text-5xl font-black text-[#0F172A] tracking-tighter leading-none">{riskState?.score ?? "12"} / 100</div>
+                <div className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] opacity-40">Global Exposure</div>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="relative w-64 h-64 md:w-96 md:h-96 flex items-center justify-center">
-          <Globe size={400} className="text-[#2563EB] opacity-[0.03] absolute" />
-          <div className="w-full h-full border border-gray-50 rounded-full animate-pulse flex items-center justify-center">
-            <Shield size={64} className="text-[#2563EB]/10" />
+          <div className="relative w-64 h-64 md:w-96 md:h-96 flex items-center justify-center">
+            <Globe size={400} className="text-[#2563EB] opacity-[0.03] absolute" />
+            <div className="w-full h-full border border-gray-50 rounded-full animate-pulse flex items-center justify-center">
+              <Shield size={64} className="text-[#2563EB]/10" />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

@@ -53,24 +53,24 @@ export function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    {/* Connect Terminal Button */}
-                    <button
-                        onClick={connectTerminal}
-                        disabled={walletLoading || !account || terminalConnected}
-                        className={`px-5 py-2.5 rounded-lg border text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${terminalConnected
-                            ? 'bg-emerald-50 border-emerald-100 text-emerald-600'
-                            : !account
-                                ? 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed'
+                    {/* Connect Terminal Button - Only visible if wallet is connected */}
+                    {account && (
+                        <button
+                            onClick={connectTerminal}
+                            disabled={walletLoading || terminalConnected}
+                            className={`px-5 py-2.5 rounded-lg border text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${terminalConnected
+                                ? 'bg-emerald-50 border-emerald-100 text-emerald-600'
                                 : 'bg-white border-gray-200 text-[#0F172A] hover:bg-gray-50 hover:border-gray-300'
-                            }`}
-                    >
-                        {terminalConnected ? (
-                            <>
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                Terminal Active
-                            </>
-                        ) : "Connect Terminal"}
-                    </button>
+                                }`}
+                        >
+                            {terminalConnected ? (
+                                <>
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    Terminal Active
+                                </>
+                            ) : "Connect Terminal"}
+                        </button>
+                    )}
 
                     {/* wallet Connect - Integrated with ThirdWeb context */}
                     <div className="institutional-connect">
