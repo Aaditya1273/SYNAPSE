@@ -6,7 +6,7 @@ import { FileText, Download, ExternalLink, Calendar, Search, Fingerprint, Cpu } 
 import { useAetherState, useAuditLogs } from "@/lib/hooks";
 
 export default function Compliance() {
-    const { riskState } = useAetherState();
+    const { riskState, latency } = useAetherState();
     const { logs: onChainLogs } = useAuditLogs();
     const [searchTerm, setSearchTerm] = useState("");
     const [activeTab, setActiveTab] = useState("WORKFLOW_YAML");
@@ -27,8 +27,8 @@ export default function Compliance() {
 
     const stats = [
         { label: "Active Proofs", value: auditLogs.length.toLocaleString(), trend: "VERIFIED", color: "#2563EB" },
-        { label: "Validation Score", value: auditLogs.length > 0 ? "100%" : "0%", trend: "OPTIMAL", color: "#10B981" },
-        { label: "Proof Latency", value: "0.8ms", trend: "ZK_STARK", color: "#6366f1" }
+        { label: "Validation Score", value: auditLogs.length > 5 ? "100%" : auditLogs.length > 0 ? "98%" : "0%", trend: "OPTIMAL", color: "#10B981" },
+        { label: "Proof Latency", value: latency > 0 ? `${latency.toFixed(1)}ms` : "SYNCING", trend: "ZK_STARK", color: "#6366f1" }
     ];
 
     const exportAudit = () => {

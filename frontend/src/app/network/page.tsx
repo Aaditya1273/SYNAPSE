@@ -19,16 +19,8 @@ import {
 import { useAetherState, useAuditLogs } from "@/lib/hooks";
 
 export default function NetworkPage() {
-    const { riskState, isPaused } = useAetherState();
+    const { riskState, isPaused, latency } = useAetherState();
     const { logs } = useAuditLogs();
-    const [latency, setLatency] = useState(42);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setLatency(prev => Math.max(38, Math.min(48, prev + (Math.random() - 0.5) * 2)));
-        }, 3000);
-        return () => clearInterval(interval);
-    }, []);
 
     const nodes = [
         { id: "NODE_TYO_01", x: 820, y: 180 },
@@ -89,7 +81,7 @@ export default function NetworkPage() {
                         <div className="space-y-4">
                             <div className="flex justify-between items-end">
                                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Network Latency</span>
-                                <span className="text-lg font-black text-[#2563EB] tracking-tighter">{latency.toFixed(1)}ms</span>
+                                <span className="text-lg font-black text-[#2563EB] tracking-tighter">{latency > 0 ? latency.toFixed(1) : "SYNC"}ms</span>
                             </div>
                             <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                                 <motion.div
@@ -243,7 +235,7 @@ export default function NetworkPage() {
                                         </div>
                                         <div className="space-y-0.5">
                                             <div className="flex items-center gap-1.5 font-mono text-[7px] text-gray-400 font-bold uppercase">
-                                                <Activity size={8} /> latency: {latency.toFixed(1)}ms
+                                                <Activity size={8} /> latency: {latency > 0 ? latency.toFixed(1) : "SYNC"}ms
                                             </div>
                                             <div className="flex items-center gap-1.5 font-mono text-[7px] text-[#2563EB] font-black">
                                                 <Zap size={8} /> HASH: 0x{node.id.split('_')[1]}_{riskState?.score || '00'}

@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, ShieldAlert, Cpu, Globe, ExternalLink, Loader2, Zap, Lock, Fingerprint } from "lucide-react";
-import { useAetherState, useWallet, useAetherActions, useAuditLogs } from "@/lib/hooks";
+import { useAetherState, useWallet, useAetherActions, useAuditLogs, useMarketData } from "@/lib/hooks";
 
 export default function Dashboard() {
     const { isPaused, riskState, loading } = useAetherState();
     const { account } = useWallet();
     const { manualOverride, pending } = useAetherActions();
     const { logs: firewallLogs } = useAuditLogs();
+    const btcData = useMarketData();
     const [overrideNote, setOverrideNote] = useState("");
 
     const riskScore = riskState?.score ?? (isPaused ? 88 : 12);
@@ -89,9 +90,9 @@ export default function Dashboard() {
 
                     <div className="grid grid-cols-3 gap-4 mt-10 pt-10 border-t border-gray-50">
                         {[
-                            { label: "Predictive Drift", value: "+0.12%", color: "#2563EB" },
+                            { label: "Predictive Drift", value: btcData ? (btcData.change24h > 0 ? "+" : "") + btcData.change24h.toFixed(2) + "%" : "SYNCING...", color: "#2563EB" },
                             { label: "Contagion risk", value: riskScore > 50 ? "Unstable" : "Nominal", color: riskScore > 50 ? "#EF4444" : "#10B981" },
-                            { label: "Consensus", value: "Locked", color: "#0F172A" }
+                            { label: "Consensus", value: "Verified", color: "#0F172A" }
                         ].map((stat, i) => (
                             <div key={i} className="space-y-1">
                                 <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</div>
@@ -116,8 +117,8 @@ export default function Dashboard() {
                     <div className="space-y-3 flex-1">
                         {[
                             { name: "Gemini 1.5 Pro", status: getAIStatus(riskScore).status, color: getAIStatus(riskScore).color },
-                            { name: "Claude 3.5 Sonnet", status: getAIStatus(riskScore - 2).status, color: getAIStatus(riskScore - 2).color },
-                            { name: "Grok-1 Tactical", status: getAIStatus(riskScore + 2).status, color: getAIStatus(riskScore + 2).color }
+                            { name: "Claude 3.5 Sonnet", status: getAIStatus(riskScore + (btcData ? Math.floor(btcData.change24h) : 0)).status, color: getAIStatus(riskScore + (btcData ? Math.floor(btcData.change24h) : 0)).color },
+                            { name: "Grok-1 Tactical", status: getAIStatus(riskScore - (btcData ? Math.floor(btcData.change24h) : 0)).status, color: getAIStatus(riskScore - (btcData ? Math.floor(btcData.change24h) : 0)).color }
                         ].map((ai, i) => (
                             <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-gray-50 hover:bg-gray-50 transition-colors">
                                 <span className="text-[11px] font-bold text-gray-600 uppercase tracking-tight">{ai.name}</span>
