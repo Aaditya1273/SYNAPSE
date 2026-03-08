@@ -3,36 +3,51 @@ import {
     consensusIdenticalAggregation,
     type Runtime,
     type CronPayload,
+    HTTPClient,
+    ConsensusAggregationByFields,
+    median,
 } from '@chainlink/cre-sdk';
 
 // ---------- Handlers ----------
 
 export async function onSentimentCron(runtime: Runtime<any>, _payload: CronPayload): Promise<string> {
-    runtime.log("Invoking Aegis AI Engine for sentiment analysis...");
+    runtime.log("Invoking Aegis AI Engine for REAL-TIME market sentiment analysis...");
 
-    const httpClient = new cre.capabilities.HTTPClient();
+    const httpClient = new HTTPClient();
 
-    // Capability methods return a function that must be called.
-    const aiResult = await httpClient.sendRequest(runtime, (requester) => {
-        return requester.sendRequest({
-            method: 'GET',
-            url: 'https://jsonplaceholder.typicode.com/posts/2',
-        });
-    }, consensusIdenticalAggregation<any>())();
+    const fetchSentiment = async (config: any) => {
+        // Fetching real-world sentiment data
+        const response = await fetch('https://cryptopanic.com/api/v1/posts/?auth_token=PUBLIC&kind=news');
+        const data = await response.json();
+        const results = data.results || [];
 
-    const sentimentScore = 85;
-    const reason = "AI detected high volatility and panic signals.";
+        // Derive a score based on news volume and variety
+        const score = Math.min(results.length * 5, 100);
+        return {
+            sentimentScore: score,
+            reason: results.length > 10 ? "High market news volume detected." : "Moderate news frequency.",
+        };
+    };
 
-    runtime.log(`Aegis AI Assessment: Sentiment Score=${sentimentScore}, Reason=${reason}`);
+    const aggregated = await httpClient.sendRequest(
+        runtime,
+        fetchSentiment,
+        ConsensusAggregationByFields<{ sentimentScore: number; reason: string }>({
+            sentimentScore: median<number>(),
+            reason: (values: string[]) => values[0],
+        })
+    )(runtime.config).result();
 
-    if (sentimentScore >= (runtime.config.aiSentimentThreshold || 80)) {
+    runtime.log(`Aegis AI Assessment: Sentiment Score=${aggregated.sentimentScore}, Reason=${aggregated.reason}`);
+
+    if (aggregated.sentimentScore >= (runtime.config.aiSentimentThreshold || 80)) {
         runtime.log(`Negative AI Sentiment detected! Triggering on-chain risk response...`);
         return JSON.stringify({
             status: "AI_TRIGGERED",
-            sentimentScore,
-            reason,
+            sentimentScore: aggregated.sentimentScore,
+            reason: aggregated.reason,
         });
     }
 
-    return JSON.stringify({ status: "AI_OK", sentimentScore });
+    return JSON.stringify({ status: "AI_OK", sentimentScore: aggregated.sentimentScore });
 }
