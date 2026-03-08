@@ -97,10 +97,10 @@ export default function NetworkPage() {
                             <h4 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Active Edge Relays</h4>
                             <div className="space-y-3">
                                 {[
-                                    { label: "Tokyo-Primary", status: "STABLE", color: "#10B981", hash: "0xTYO_10", offset: 12 },
-                                    { label: "London-Bridge", status: "NOMINAL", color: "#2563EB", hash: "0xLON_8B", offset: 5 },
+                                    { label: "Tokyo-Primary", status: "NOMINAL", color: "#2563EB", hash: "0xTYO_10", offset: 12 },
+                                    { label: "London-Bridge", status: "STABLE", color: "#10B981", hash: "0xLON_8B", offset: 5 },
                                     { label: "NYC-Gateway", status: "STABLE", color: "#10B981", hash: "0xNYC_4F", offset: 28 },
-                                    { label: "SG-Consensus", status: "SYNCING", color: "#F59E0B", hash: "0xSGP_00", offset: 0 },
+                                    { label: "SG-Consensus", status: "SYNCING", color: "#EF4444", hash: "0xSGP_00", offset: 0 },
                                 ].map((node, i) => (
                                     <div key={i} className="flex flex-col space-y-2 group cursor-crosshair p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
                                         <div className="flex justify-between items-center">
@@ -219,7 +219,7 @@ export default function NetworkPage() {
                                 // Define dynamic node properties simulating live network state
                                 const isPrimary = i === 0;
                                 const isSyncing = i === 4; // Arbitrary node as syncing
-                                const nodeColor = isSyncing ? '#F59E0B' : (isPrimary ? '#2563EB' : '#10B981'); // Amber, Blue, Green
+                                const nodeColor = isSyncing ? '#EF4444' : (isPrimary ? '#2563EB' : '#10B981'); // Red, Blue, Green
                                 const nodeHash = `0x${node.id.split('_')[1]}_${riskState?.score || (isPrimary ? '10' : '00')}`;
                                 const nodeLatency = isSyncing ? 'SYNCING...' : `${(latency > 0 ? latency + (i * 10) : 0).toFixed(0)}ms`;
 
@@ -247,6 +247,13 @@ export default function NetworkPage() {
                                                     boxShadow: `0 0 20px ${nodeColor}80`
                                                 }}
                                             />
+
+                                            {/* Server Name Label */}
+                                            <div className="absolute top-5 pointer-events-none whitespace-nowrap">
+                                                <span className="text-[10px] font-black uppercase tracking-widest drop-shadow-md" style={{ color: nodeColor }}>
+                                                    {node.id.split('_')[1]}
+                                                </span>
+                                            </div>
 
                                             {/* Real-Time Pulse for Active Consensus */}
                                             {latestLog && isPrimary && (
