@@ -83,7 +83,7 @@ export default function Compliance() {
                 <div className="md:col-span-1 space-y-8">
                     <div className="p-8 rounded-[2rem] bg-white/2 border border-white/5 space-y-1">
                         <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-white/5 pb-2">Active Proofs</div>
-                        <div className="text-4xl font-black text-white italic">2</div>
+                        <div className="text-4xl font-black text-white italic">{auditLogs.length}</div>
                         <div className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-2">Verified</div>
                     </div>
 
