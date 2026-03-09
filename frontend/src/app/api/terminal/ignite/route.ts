@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { exec } from 'child_process';
 import os from 'os';
 
-export async function POST() {
+export async function POST(): Promise<NextResponse> {
     const platform = os.platform();
     let command = '';
 
@@ -19,7 +19,7 @@ export async function POST() {
         command = `start wt node ${scriptPath} || start cmd /k node ${scriptPath}`;
     }
 
-    return new Promise((resolve) => {
+    return new Promise<NextResponse>((resolve) => {
         if (!command) {
             resolve(NextResponse.json({ error: 'Unsupported platform' }, { status: 400 }));
             return;
