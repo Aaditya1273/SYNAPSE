@@ -53,7 +53,6 @@ export function useWallet() {
             if (response.ok) {
                 setTerminalConnected(true);
                 // We'll handle visual logging via a shared event or state if needed
-                // For now, let's assume useAuditLogs can pick up local triggers
                 window.dispatchEvent(new CustomEvent('protocol-log', {
                     detail: { event: "Tactical Terminal Ignited", id: "SYS-CORE-01" }
                 }));

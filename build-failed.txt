@@ -1,0 +1,86 @@
+5:57:35 PM: Netlify Build                                                 
+5:57:35 PM: ────────────────────────────────────────────────────────────────
+5:57:35 PM: ​
+5:57:35 PM: ❯ Version
+5:57:35 PM:   @netlify/build 35.8.7
+5:57:35 PM: ​
+5:57:35 PM: ❯ Flags
+5:57:35 PM:   accountId: 6803a7d43d49e74d2307728e
+5:57:35 PM:   baseRelDir: true
+5:57:35 PM:   buildId: 69ad6b25dec492000801381c
+5:57:35 PM:   deployId: 69ad6b25dec492000801381e
+5:57:35 PM: ​
+5:57:35 PM: ❯ Current directory
+5:57:35 PM:   /opt/build/repo/frontend
+5:57:35 PM: ​
+5:57:35 PM: ❯ Config file
+5:57:35 PM:   /opt/build/repo/netlify.toml
+5:57:35 PM: ​
+5:57:35 PM: ❯ Context
+5:57:35 PM:   production
+5:57:35 PM: ​
+5:57:35 PM: build.command from netlify.toml                               
+5:57:35 PM: ────────────────────────────────────────────────────────────────
+5:57:35 PM: ​
+5:57:35 PM: $ npm run build
+5:57:35 PM: > frontend@0.1.0 build
+5:57:35 PM: > next build
+5:57:36 PM: ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+5:57:43 PM:  We detected multiple lockfiles and selected the directory of /opt/build/repo/bun.lock as the root directory.
+5:57:43 PM:  To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+5:57:43 PM:  Detected additional lockfiles:
+5:57:43 PM:    * /opt/build/repo/frontend/bun.lock
+5:57:43 PM: ⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+5:57:43 PM: ▲ Next.js 16.1.6 (Turbopack)
+5:57:43 PM:   Creating an optimized production build ...
+5:57:59 PM: ✓ Compiled successfully in 22.7s
+5:57:59 PM:   Running TypeScript ...
+5:58:06 PM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)
+5:58:06 PM: Failed to compile.
+5:58:06 PM: 
+5:58:06 PM: Type error: Type 'typeof import("/opt/build/repo/frontend/src/app/api/terminal/ignite/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/terminal/ignite">'.
+5:58:06 PM:   The types returned by 'POST(...)' are incompatible between these types.
+5:58:06 PM:     Type 'Promise<unknown>' is not assignable to type 'void | Response | Promise<void | Response>'.
+5:58:06 PM:       Type 'Promise<unknown>' is not assignable to type 'Promise<void | Response>'.
+5:58:06 PM:         Type 'unknown' is not assignable to type 'void | Response'.
+5:58:06 PM: Next.js build worker exited with code: 1 and signal: null
+5:58:06 PM: ​
+5:58:06 PM: "build.command" failed                                        
+5:58:06 PM: ────────────────────────────────────────────────────────────────
+5:58:06 PM: ​
+5:58:06 PM:   Error message
+5:58:06 PM:   Command failed with exit code 1: npm run build (https://ntl.fyi/exit-code-1)
+5:58:06 PM: ​
+5:58:06 PM:   Error location
+5:58:06 PM:   In build.command from netlify.toml:
+5:58:06 PM:   npm run build
+5:58:06 PM: ​
+5:58:06 PM:   Resolved config
+5:58:06 PM:   build:
+5:58:06 PM:     base: /opt/build/repo/frontend
+5:58:06 PM:     command: npm run build
+5:58:06 PM:     commandOrigin: config
+5:58:06 PM:     environment:
+5:58:06 PM:       - NEXT_PUBLIC_THIRDWEB_CLIENT_ID
+5:58:06 PM:       - OMNI_SENTRY_CORE_ADDRESS
+5:58:06 PM:       - TOKENIZED_TREASURY_ADDRESS
+5:58:06 PM:       - NODE_VERSION
+5:58:06 PM:     publish: /opt/build/repo/frontend/.next
+5:58:06 PM:     publishOrigin: config
+5:58:06 PM: Build failed due to a user error: Build script returned non-zero exit code: 2
+5:58:06 PM: Failing build: Failed to build site
+5:58:07 PM: Finished processing build request in 48.475s
+Deploying
+Skipped
+Cleanup
+Skipped
+Post-processing
+Skipped
+Docs
+Pricing
+Support
+Blog
+Changelog
+Terms
+© 2026 Netlify

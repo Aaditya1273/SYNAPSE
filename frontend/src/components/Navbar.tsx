@@ -71,7 +71,7 @@ export function Navbar() {
                             {terminalConnected ? (
                                 <>
                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10B981]" />
-                                    Command Copied!
+                                    Terminal Active
                                 </>
                             ) : "Connect Terminal"}
                         </button>
